@@ -110,10 +110,28 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated Background Blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-br from-reset-r/20 to-reset-e/20 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-40 left-10 w-80 h-80 bg-gradient-to-br from-reset-s/20 to-reset-t/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-br from-reset-e2/15 to-reset-r/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+      </div>
+
+      {/* Grid Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
+
+      {/* Floating Particles */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none hidden md:block">
+        <Sparkles className="absolute top-32 left-20 w-4 h-4 text-reset-r/30 animate-scale-pulse" style={{ animationDelay: '0s' }} />
+        <Star className="absolute top-48 right-32 w-3 h-3 text-reset-e/30 animate-scale-pulse" style={{ animationDelay: '1s' }} />
+        <Heart className="absolute bottom-64 left-1/4 w-4 h-4 text-reset-s/30 animate-scale-pulse" style={{ animationDelay: '2s' }} />
+        <Target className="absolute top-1/3 right-20 w-3 h-3 text-reset-t/30 animate-scale-pulse" style={{ animationDelay: '3s' }} />
+      </div>
+
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="zen-container py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-reset-r" />
             <span className="text-xl font-bold bg-gradient-reset bg-clip-text text-transparent">
@@ -124,23 +142,23 @@ const Dashboard = () => {
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
             <Link to="/profile">
-              <div className="w-8 h-8 rounded-full bg-gradient-reset flex items-center justify-center text-white text-sm font-bold cursor-pointer hover:ring-2 hover:ring-reset-r/50 transition-all">
+              <div className="w-8 h-8 rounded-full bg-gradient-reset flex items-center justify-center text-white text-sm font-bold cursor-pointer hover:ring-2 hover:ring-reset-r/50 transition-all hover:scale-110">
                 {profile?.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
               </div>
             </Link>
-            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} className="hover:bg-reset-r/10">
               <LogOut className="w-5 h-5" />
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="zen-container py-8 relative z-10">
         {/* Welcome section */}
-        <section className="mb-12">
+        <section className="mb-12 animate-bounce-in">
           <div className="flex items-center gap-4 mb-6">
             <Link to="/profile">
-              <div className="w-16 h-16 rounded-full bg-gradient-reset flex items-center justify-center text-white text-2xl font-bold cursor-pointer hover:ring-4 hover:ring-reset-r/30 transition-all">
+              <div className="w-16 h-16 rounded-full bg-gradient-reset flex items-center justify-center text-white text-2xl font-bold cursor-pointer hover:ring-4 hover:ring-reset-r/30 transition-all hover:scale-110 shadow-lg" style={{ boxShadow: '0 0 30px hsl(var(--reset-r) / 0.3)' }}>
                 {profile?.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
               </div>
             </Link>
@@ -154,53 +172,69 @@ const Dashboard = () => {
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4 text-center">
-              <Flame className="w-8 h-8 text-reset-r mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">{progress.streak_days}</p>
-              <p className="text-sm text-muted-foreground">{t.dashboard.streakDays}</p>
-            </div>
-            <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4 text-center">
-              <BookOpen className="w-8 h-8 text-reset-s mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">{progress.completed_modules}</p>
-              <p className="text-sm text-muted-foreground">{t.dashboard.lessonsComplete}</p>
-            </div>
-            <div className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4 text-center">
-              <Star className="w-8 h-8 text-reset-e mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">{progress.total_achievements}</p>
-              <p className="text-sm text-muted-foreground">{t.dashboard.achievements}</p>
-            </div>
+            {[
+              { icon: Flame, value: progress.streak_days, label: t.dashboard.streakDays, color: 'reset-r' },
+              { icon: BookOpen, value: progress.completed_modules, label: t.dashboard.lessonsComplete, color: 'reset-s' },
+              { icon: Star, value: progress.total_achievements, label: t.dashboard.achievements, color: 'reset-e' },
+            ].map((stat, index) => (
+              <div 
+                key={stat.label}
+                className="bg-card/50 backdrop-blur border-2 rounded-xl p-4 text-center hover-lift animate-bounce-in"
+                style={{ 
+                  borderColor: `hsl(var(--${stat.color}))`,
+                  boxShadow: `0 8px 32px hsl(var(--${stat.color}) / 0.15)`,
+                  animationDelay: `${index * 100}ms`
+                }}
+              >
+                <stat.icon className={`w-8 h-8 text-${stat.color} mx-auto mb-2`} />
+                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </section>
 
         {/* RESET Journey Progress */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-foreground mb-6">{t.dashboard.yourJourney}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6 animate-bounce-in" style={{ animationDelay: '200ms' }}>{t.dashboard.yourJourney}</h2>
           <div className="space-y-4">
-            {resetSteps.map((step) => (
+            {resetSteps.map((step, index) => (
               <Link
                 key={step.letter}
                 to="/modules"
-                className="block bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4 hover:border-border transition-all group"
+                className="block animate-bounce-in"
+                style={{ animationDelay: `${(index + 3) * 100}ms` }}
               >
-                <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl bg-${step.color}/20 flex items-center justify-center`}>
-                    <step.icon className={`w-6 h-6 text-${step.color}`} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-lg font-bold text-${step.color}`}>
-                        {step.letter.replace('2', '')}
-                      </span>
-                      <span className="font-medium text-foreground">{step.title}</span>
+                <div 
+                  className="bg-card/50 backdrop-blur border-2 rounded-xl p-4 hover:scale-[1.02] transition-all group"
+                  style={{ 
+                    borderColor: `hsl(var(--${step.color}))`,
+                    boxShadow: `0 4px 20px hsl(var(--${step.color}) / 0.1)`
+                  }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div 
+                      className="w-12 h-12 rounded-xl flex items-center justify-center transition-all group-hover:scale-110 group-hover:rotate-6"
+                      style={{ backgroundColor: `hsl(var(--${step.color}) / 0.2)` }}
+                    >
+                      <step.icon className={`w-6 h-6 text-${step.color}`} />
                     </div>
-                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full bg-${step.color} transition-all`}
-                        style={{ width: `${step.progress}%` }}
-                      />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-lg font-bold text-${step.color}`}>
+                          {step.letter.replace('2', '')}
+                        </span>
+                        <span className="font-medium text-foreground">{step.title}</span>
+                      </div>
+                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full bg-${step.color} transition-all`}
+                          style={{ width: `${step.progress}%` }}
+                        />
+                      </div>
                     </div>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
                   </div>
-                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                 </div>
               </Link>
             ))}
@@ -209,19 +243,28 @@ const Dashboard = () => {
 
         {/* Quick Actions */}
         <section>
-          <h2 className="text-2xl font-bold text-foreground mb-6">{t.dashboard.quickActions}</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-6 animate-bounce-in" style={{ animationDelay: '600ms' }}>{t.dashboard.quickActions}</h2>
           <div className="grid md:grid-cols-3 gap-4">
-            {quickActions.map((action) => (
+            {quickActions.map((action, index) => (
               <Link
                 key={action.title}
                 to={action.href}
-                className={`bg-card/50 backdrop-blur border border-border/50 rounded-xl p-6 hover:border-${action.color}/50 transition-all group`}
+                className="animate-bounce-in"
+                style={{ animationDelay: `${(index + 8) * 100}ms` }}
               >
-                <action.icon className={`w-10 h-10 text-${action.color} mb-4`} />
-                <h3 className="font-semibold text-foreground mb-1">{action.title}</h3>
-                <div className="flex items-center text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                  <span>{t.common.continue}</span>
-                  <ChevronRight className="w-4 h-4 ml-1" />
+                <div 
+                  className="bg-card/50 backdrop-blur border-2 rounded-xl p-6 hover:scale-[1.02] transition-all group h-full"
+                  style={{ 
+                    borderColor: `hsl(var(--${action.color}))`,
+                    boxShadow: `0 4px 20px hsl(var(--${action.color}) / 0.1)`
+                  }}
+                >
+                  <action.icon className={`w-10 h-10 text-${action.color} mb-4 group-hover:scale-110 transition-transform`} />
+                  <h3 className="font-semibold text-foreground mb-1">{action.title}</h3>
+                  <div className="flex items-center text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                    <span>{t.common.continue}</span>
+                    <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
               </Link>
             ))}
