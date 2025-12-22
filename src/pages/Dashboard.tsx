@@ -5,6 +5,7 @@ import { useTranslations } from '@/hooks/useTranslations';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import LionelCoach from '@/components/LionelCoach';
 import { 
   BookOpen, 
   Trophy, 
@@ -17,7 +18,8 @@ import {
   Star,
   Flame,
   Target,
-  Zap
+  Zap,
+  Play
 } from 'lucide-react';
 
 interface UserProgress {
@@ -105,8 +107,8 @@ const Dashboard = () => {
 
   const quickActions = [
     { title: t.dashboard.continueLesson, icon: BookOpen, href: '/modules', color: 'reset-r' },
+    { title: t.dashboard.masterclassLibrary, icon: Play, href: '/masterclasses', color: 'reset-e' },
     { title: t.dashboard.journalEntry, icon: Calendar, href: '/journal', color: 'reset-s' },
-    { title: t.dashboard.achievements, icon: Trophy, href: '/achievements', color: 'reset-e' },
   ];
 
   return (
@@ -271,6 +273,13 @@ const Dashboard = () => {
           </div>
         </section>
       </main>
+
+      {/* AI Coach */}
+      <LionelCoach 
+        userName={profile?.display_name || undefined}
+        currentModule="Rhythm"
+        progress={Math.round((progress.completed_modules / 5) * 100)}
+      />
     </div>
   );
 };
