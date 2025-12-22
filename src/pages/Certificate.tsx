@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, Download, Share2, Award, Calendar, Trophy } from "lucide-react";
+import { Share2, Award, Calendar, Trophy, Sparkles, Download } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import MobileLayout from "@/components/layout/MobileLayout";
+import MobileHeader from "@/components/layout/MobileHeader";
+import PageTransition from "@/components/layout/PageTransition";
+import EmptyState from "@/components/mobile/EmptyState";
 
 interface CertificateData {
   id: string;
@@ -16,17 +20,17 @@ interface CertificateData {
 }
 
 const moduleConfig: Record<string, { title: string; color: string }> = {
-  rhythm: { title: "Rhythm", color: "hsl(var(--reset-rhythm))" },
-  energy: { title: "Energy", color: "hsl(var(--reset-energy))" },
-  systems: { title: "Systems", color: "hsl(var(--reset-systems))" },
-  execution: { title: "Execution", color: "hsl(var(--reset-execution))" },
-  transformation: { title: "Transformation", color: "hsl(var(--reset-transformation))" },
+  rhythm: { title: "Rhythm", color: "primary" },
+  energy: { title: "Energy", color: "secondary" },
+  systems: { title: "Systems", color: "accent" },
+  execution: { title: "Execution", color: "primary" },
+  transformation: { title: "Transformation", color: "secondary" },
 };
 
 const Certificate = () => {
   const { certificateId } = useParams<{ certificateId: string }>();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { loading: authLoading } = useAuth();
   const { toast } = useToast();
   
   const [certificate, setCertificate] = useState<CertificateData | null>(null);
@@ -92,24 +96,31 @@ const Certificate = () => {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-primary">Loading...</div>
-      </div>
+      <MobileLayout showBottomNav={false}>
+        <MobileHeader title="Certificate" backPath="/dashboard" />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Sparkles className="w-10 h-10 text-primary animate-pulse" />
+        </div>
+      </MobileLayout>
     );
   }
 
   if (!certificate) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <Award className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-foreground mb-2">Certificate Not Found</h2>
-          <p className="text-muted-foreground mb-4">This certificate does not exist or has been removed.</p>
-          <Button onClick={() => navigate("/dashboard")}>
-            Back to Dashboard
-          </Button>
+      <MobileLayout showBottomNav={false}>
+        <MobileHeader title="Certificate" backPath="/dashboard" />
+        <div className="px-4 py-12">
+          <EmptyState
+            icon={Award}
+            title="Certificate Not Found"
+            description="This certificate does not exist or has been removed."
+            action={{
+              label: "Back to Dashboard",
+              onClick: () => navigate("/dashboard")
+            }}
+          />
         </div>
-      </div>
+      </MobileLayout>
     );
   }
 
@@ -121,119 +132,138 @@ const Certificate = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
-        <div className="container max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
-              <ChevronLeft className="w-5 h-5" />
-            </Button>
-            
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={handleShare}>
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </Button>
-            </div>
+    <MobileLayout showBottomNav={false}>
+      <MobileHeader 
+        title="Certificate"
+        backPath="/dashboard"
+        rightContent={
+          <Button variant="ghost" size="icon" onClick={handleShare}>
+            <Share2 className="w-5 h-5" />
+          </Button>
+        }
+      />
+
+      <PageTransition>
+        <main className="px-4 py-6">
+          {/* Celebration Animation */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <Sparkles className="absolute top-20 left-8 w-6 h-6 text-primary/40 animate-scale-pulse" />
+            <Sparkles className="absolute top-32 right-12 w-4 h-4 text-secondary/40 animate-scale-pulse" style={{ animationDelay: '0.5s' }} />
+            <Sparkles className="absolute top-48 left-16 w-5 h-5 text-accent/40 animate-scale-pulse" style={{ animationDelay: '1s' }} />
           </div>
-        </div>
-      </header>
 
-      <main className="container max-w-3xl mx-auto px-4 py-12">
-        {/* Certificate Card */}
-        <div 
-          className="relative rounded-3xl border-4 p-8 md:p-12 bg-card shadow-2xl"
-          style={{ 
-            borderColor: config.color,
-            background: `linear-gradient(135deg, ${config.color}05, transparent, ${config.color}05)`
-          }}
-        >
-          {/* Decorative corners */}
+          {/* Certificate Card */}
           <div 
-            className="absolute top-4 left-4 w-12 h-12 border-t-4 border-l-4 rounded-tl-xl"
-            style={{ borderColor: config.color }}
-          />
-          <div 
-            className="absolute top-4 right-4 w-12 h-12 border-t-4 border-r-4 rounded-tr-xl"
-            style={{ borderColor: config.color }}
-          />
-          <div 
-            className="absolute bottom-4 left-4 w-12 h-12 border-b-4 border-l-4 rounded-bl-xl"
-            style={{ borderColor: config.color }}
-          />
-          <div 
-            className="absolute bottom-4 right-4 w-12 h-12 border-b-4 border-r-4 rounded-br-xl"
-            style={{ borderColor: config.color }}
-          />
-
-          <div className="text-center">
-            {/* Logo/Badge */}
+            className="relative bg-card/90 backdrop-blur-sm rounded-3xl border-4 p-6 md:p-10 shadow-strong animate-fade-in-up"
+            style={{ 
+              borderColor: `hsl(var(--${config.color}))`,
+            }}
+          >
+            {/* Decorative corners */}
             <div 
-              className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center"
-              style={{ backgroundColor: `${config.color}20` }}
-            >
-              <Trophy className="w-10 h-10" style={{ color: config.color }} />
-            </div>
-
-            {/* Title */}
-            <h1 className="text-sm uppercase tracking-[0.3em] text-muted-foreground mb-2">
-              Certificate of Completion
-            </h1>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{ color: config.color }}>
-              {config.title} Mastery
-            </h2>
-
-            {/* Divider */}
+              className="absolute top-3 left-3 w-8 h-8 border-t-4 border-l-4 rounded-tl-xl"
+              style={{ borderColor: `hsl(var(--${config.color}))` }}
+            />
             <div 
-              className="w-24 h-1 mx-auto mb-8 rounded-full"
-              style={{ backgroundColor: config.color }}
+              className="absolute top-3 right-3 w-8 h-8 border-t-4 border-r-4 rounded-tr-xl"
+              style={{ borderColor: `hsl(var(--${config.color}))` }}
+            />
+            <div 
+              className="absolute bottom-3 left-3 w-8 h-8 border-b-4 border-l-4 rounded-bl-xl"
+              style={{ borderColor: `hsl(var(--${config.color}))` }}
+            />
+            <div 
+              className="absolute bottom-3 right-3 w-8 h-8 border-b-4 border-r-4 rounded-br-xl"
+              style={{ borderColor: `hsl(var(--${config.color}))` }}
             />
 
-            {/* Presented to */}
-            <p className="text-muted-foreground mb-2">This is to certify that</p>
-            <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-              {userName || "Student"}
-            </h3>
-
-            {/* Description */}
-            <p className="text-muted-foreground max-w-md mx-auto mb-8">
-              has successfully completed all lessons and assessments in the{" "}
-              <span className="font-semibold" style={{ color: config.color }}>
-                {config.title}
-              </span>{" "}
-              module of the RESET Blueprint® program.
-            </p>
-
-            {/* Score (if available) */}
-            {certificate.score !== null && (
-              <div className="mb-8">
-                <div 
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
-                  style={{ backgroundColor: `${config.color}20` }}
-                >
-                  <Award className="w-5 h-5" style={{ color: config.color }} />
-                  <span className="font-bold" style={{ color: config.color }}>
-                    Score: {certificate.score}%
-                  </span>
-                </div>
+            <div className="text-center py-4">
+              {/* Badge */}
+              <div 
+                className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center animate-bounce-slow"
+                style={{ backgroundColor: `hsl(var(--${config.color}) / 0.15)` }}
+              >
+                <Trophy className="w-10 h-10" style={{ color: `hsl(var(--${config.color}))` }} />
               </div>
-            )}
 
-            {/* Date */}
-            <div className="flex items-center justify-center gap-2 text-muted-foreground">
-              <Calendar className="w-4 h-4" />
-              <span>{completedDate}</span>
+              {/* Title */}
+              <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">
+                Certificate of Completion
+              </p>
+              <h2 
+                className="text-2xl md:text-3xl font-bold mb-6"
+                style={{ color: `hsl(var(--${config.color}))` }}
+              >
+                {config.title} Mastery
+              </h2>
+
+              {/* Divider */}
+              <div 
+                className="w-16 h-1 mx-auto mb-6 rounded-full"
+                style={{ backgroundColor: `hsl(var(--${config.color}))` }}
+              />
+
+              {/* Presented to */}
+              <p className="text-sm text-muted-foreground mb-2">This is to certify that</p>
+              <h3 className="text-xl md:text-2xl font-bold text-foreground mb-6">
+                {userName || "Student"}
+              </h3>
+
+              {/* Description */}
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-6 leading-relaxed">
+                has successfully completed all lessons and assessments in the{" "}
+                <span className="font-semibold" style={{ color: `hsl(var(--${config.color}))` }}>
+                  {config.title}
+                </span>{" "}
+                module of the RESET Blueprint® program.
+              </p>
+
+              {/* Score */}
+              {certificate.score !== null && (
+                <div className="mb-6">
+                  <div 
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
+                    style={{ backgroundColor: `hsl(var(--${config.color}) / 0.15)` }}
+                  >
+                    <Award className="w-5 h-5" style={{ color: `hsl(var(--${config.color}))` }} />
+                    <span className="font-bold" style={{ color: `hsl(var(--${config.color}))` }}>
+                      Score: {certificate.score}%
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Date */}
+              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Calendar className="w-4 h-4" />
+                <span>{completedDate}</span>
+              </div>
+
+              {/* Certificate ID */}
+              <p className="mt-6 text-xs text-muted-foreground/60">
+                ID: {certificate.certificate_number}
+              </p>
             </div>
-
-            {/* Certificate number */}
-            <p className="mt-6 text-xs text-muted-foreground/60">
-              Certificate ID: {certificate.certificate_number}
-            </p>
           </div>
-        </div>
-      </main>
-    </div>
+
+          {/* Actions */}
+          <div className="mt-6 flex gap-3">
+            <Button 
+              variant="outline" 
+              className="flex-1"
+              onClick={handleShare}
+            >
+              <Share2 className="w-4 h-4 mr-2" />
+              Share
+            </Button>
+            <Button className="flex-1">
+              <Download className="w-4 h-4 mr-2" />
+              Download
+            </Button>
+          </div>
+        </main>
+      </PageTransition>
+    </MobileLayout>
   );
 };
 
