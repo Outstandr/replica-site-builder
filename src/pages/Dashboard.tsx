@@ -6,6 +6,8 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import LionelCoach from '@/components/LionelCoach';
+import StreakDialog from '@/components/StreakDialog';
+import XPDetailsDialog from '@/components/XPDetailsDialog';
 import { 
   BookOpen, 
   Trophy, 
@@ -26,6 +28,8 @@ interface UserProgress {
   completed_modules: number;
   total_achievements: number;
   streak_days: number;
+  total_xp: number;
+  level: number;
 }
 
 const Dashboard = () => {
@@ -36,8 +40,13 @@ const Dashboard = () => {
   const [progress, setProgress] = useState<UserProgress>({
     completed_modules: 0,
     total_achievements: 0,
-    streak_days: 0
+    streak_days: 0,
+    total_xp: 0,
+    level: 1
   });
+  const [streakDialogOpen, setStreakDialogOpen] = useState(false);
+  const [xpDialogOpen, setXpDialogOpen] = useState(false);
+  const [weeklyActivity, setWeeklyActivity] = useState<boolean[]>([true, true, true, false, false, false, false]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -75,7 +84,9 @@ const Dashboard = () => {
       setProgress({
         completed_modules: completedCount || 0,
         total_achievements: achievementCount || 0,
-        streak_days: 0 // Calculate from activity later
+        streak_days: 3, // Calculate from activity later
+        total_xp: (completedCount || 0) * 50 + (achievementCount || 0) * 100,
+        level: Math.floor(((completedCount || 0) * 50 + (achievementCount || 0) * 100) / 1000) + 1
       });
     };
 
@@ -174,25 +185,48 @@ const Dashboard = () => {
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4">
-            {[
-              { icon: Flame, value: progress.streak_days, label: t.dashboard.streakDays, color: 'reset-r' },
-              { icon: BookOpen, value: progress.completed_modules, label: t.dashboard.lessonsComplete, color: 'reset-s' },
-              { icon: Star, value: progress.total_achievements, label: t.dashboard.achievements, color: 'reset-e' },
-            ].map((stat, index) => (
-              <div 
-                key={stat.label}
-                className="bg-card/50 backdrop-blur border-2 rounded-xl p-4 text-center hover-lift animate-bounce-in"
-                style={{ 
-                  borderColor: `hsl(var(--${stat.color}))`,
-                  boxShadow: `0 8px 32px hsl(var(--${stat.color}) / 0.15)`,
-                  animationDelay: `${index * 100}ms`
-                }}
-              >
-                <stat.icon className={`w-8 h-8 text-${stat.color} mx-auto mb-2`} />
-                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            ))}
+            {/* Streak */}
+            <button 
+              onClick={() => setStreakDialogOpen(true)}
+              className="bg-card/50 backdrop-blur border-2 rounded-xl p-4 text-center hover-lift animate-bounce-in cursor-pointer text-left"
+              style={{ 
+                borderColor: `hsl(var(--reset-r))`,
+                boxShadow: `0 8px 32px hsl(var(--reset-r) / 0.15)`,
+              }}
+            >
+              <Flame className="w-8 h-8 text-reset-r mx-auto mb-2" />
+              <p className="text-2xl font-bold text-foreground">{progress.streak_days}</p>
+              <p className="text-sm text-muted-foreground">{t.dashboard.streakDays}</p>
+            </button>
+            
+            {/* Lessons */}
+            <div 
+              className="bg-card/50 backdrop-blur border-2 rounded-xl p-4 text-center hover-lift animate-bounce-in"
+              style={{ 
+                borderColor: `hsl(var(--reset-s))`,
+                boxShadow: `0 8px 32px hsl(var(--reset-s) / 0.15)`,
+                animationDelay: `100ms`
+              }}
+            >
+              <BookOpen className="w-8 h-8 text-reset-s mx-auto mb-2" />
+              <p className="text-2xl font-bold text-foreground">{progress.completed_modules}</p>
+              <p className="text-sm text-muted-foreground">{t.dashboard.lessonsComplete}</p>
+            </div>
+            
+            {/* XP/Achievements */}
+            <button 
+              onClick={() => setXpDialogOpen(true)}
+              className="bg-card/50 backdrop-blur border-2 rounded-xl p-4 text-center hover-lift animate-bounce-in cursor-pointer text-left"
+              style={{ 
+                borderColor: `hsl(var(--reset-e))`,
+                boxShadow: `0 8px 32px hsl(var(--reset-e) / 0.15)`,
+                animationDelay: `200ms`
+              }}
+            >
+              <Star className="w-8 h-8 text-reset-e mx-auto mb-2" />
+              <p className="text-2xl font-bold text-foreground">{progress.total_xp}</p>
+              <p className="text-sm text-muted-foreground">XP</p>
+            </button>
           </div>
         </section>
 
@@ -279,6 +313,25 @@ const Dashboard = () => {
         userName={profile?.display_name || undefined}
         currentModule="Rhythm"
         progress={Math.round((progress.completed_modules / 5) * 100)}
+      />
+
+      {/* Streak Dialog */}
+      <StreakDialog
+        open={streakDialogOpen}
+        onOpenChange={setStreakDialogOpen}
+        currentStreak={progress.streak_days}
+        longestStreak={7}
+        weeklyActivity={weeklyActivity}
+      />
+
+      {/* XP Dialog */}
+      <XPDetailsDialog
+        open={xpDialogOpen}
+        onOpenChange={setXpDialogOpen}
+        totalXP={progress.total_xp}
+        level={progress.level}
+        xpToNextLevel={1000 - (progress.total_xp % 1000)}
+        recentActivities={[]}
       />
     </div>
   );
