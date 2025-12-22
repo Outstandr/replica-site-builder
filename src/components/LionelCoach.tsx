@@ -160,7 +160,7 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
       <Button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-lg z-50",
+          "fixed bottom-24 right-4 w-14 h-14 rounded-full shadow-lg z-40",
           "bg-gradient-to-br from-reset-systems to-reset-transformation",
           "hover:scale-110 transition-transform",
           isOpen && "hidden"
