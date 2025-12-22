@@ -172,7 +172,7 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
 
       {/* Chat panel */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[500px] max-h-[80vh] bg-card rounded-2xl shadow-2xl border-2 border-border z-50 flex flex-col overflow-hidden animate-scale-in">
+        <div className="fixed inset-4 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] sm:max-h-[80vh] bg-card rounded-2xl shadow-2xl border-2 border-border z-50 flex flex-col overflow-hidden animate-scale-in">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-reset-systems/10 to-reset-transformation/10">
             <div className="flex items-center gap-3">
