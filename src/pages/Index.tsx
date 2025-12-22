@@ -61,20 +61,20 @@ const Index = () => {
             </h2>
             <p className="text-2xl text-foreground/80 font-bold max-w-2xl mx-auto">{t.landing.resetOverview.subtitle}<br/>{t.landing.resetOverview.subtitleDesc}</p>
           </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 lg:gap-8 max-w-6xl mx-auto">
             {resetSteps.map((step, index) => {
               const Icon = step.icon;
               return (
                 <div key={index} className="group relative animate-bounce-in hover-lift" style={{ animationDelay: `${index * 150}ms` }}>
-                  <div className="h-full p-8 rounded-3xl bg-gradient-to-br from-card to-card/50 border-3 hover:border-4 transition-all duration-300 shadow-medium hover:shadow-strong relative overflow-hidden" style={{ borderColor: `hsl(var(--${step.color}))`, boxShadow: `0 8px 32px hsl(var(--${step.color}) / 0.15)` }}>
-                    <div className="relative w-20 h-20 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12 shadow-lg animate-scale-pulse" style={{ backgroundColor: `hsl(var(--${step.color}) / 0.2)`, boxShadow: `0 4px 20px hsl(var(--${step.color}) / 0.3)` }}>
-                      <Icon className="w-10 h-10" style={{ color: `hsl(var(--${step.color}))` }} />
+                  <div className="h-full p-3 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl bg-gradient-to-br from-card to-card/50 border-2 md:border-3 hover:border-4 transition-all duration-300 shadow-medium hover:shadow-strong relative overflow-hidden" style={{ borderColor: `hsl(var(--${step.color}))`, boxShadow: `0 8px 32px hsl(var(--${step.color}) / 0.15)` }}>
+                    <div className="relative w-10 h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 lg:mb-6 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12 shadow-lg animate-scale-pulse" style={{ backgroundColor: `hsl(var(--${step.color}) / 0.2)`, boxShadow: `0 4px 20px hsl(var(--${step.color}) / 0.3)` }}>
+                      <Icon className="w-5 h-5 md:w-8 md:h-8 lg:w-10 lg:h-10" style={{ color: `hsl(var(--${step.color}))` }} />
                     </div>
-                    <div className="absolute top-6 right-6 w-14 h-14 rounded-full flex items-center justify-center font-black text-2xl border-3 shadow-glow animate-scale-pulse" style={{ backgroundColor: `hsl(var(--${step.color}))`, borderColor: `hsl(var(--${step.color}))`, color: `hsl(var(--card))`, boxShadow: `0 0 20px hsl(var(--${step.color}) / 0.5)` }}>{step.letter}</div>
-                    <h3 className="relative text-3xl font-black mb-2">{step.title}</h3>
-                    <p className="relative text-base font-bold mb-4" style={{ color: `hsl(var(--${step.color}))` }}>{step.subtitle}</p>
-                    <p className="relative text-foreground/70 font-medium mb-4 leading-relaxed">{step.description}</p>
-                    <div className="relative pt-4 border-t-2" style={{ borderColor: `hsl(var(--${step.color}) / 0.3)` }}><p className="text-sm text-foreground/60 font-semibold">{step.symbolism}</p></div>
+                    <div className="absolute top-3 right-3 md:top-6 md:right-6 w-8 h-8 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center font-black text-sm md:text-xl lg:text-2xl border-2 md:border-3 shadow-glow animate-scale-pulse" style={{ backgroundColor: `hsl(var(--${step.color}))`, borderColor: `hsl(var(--${step.color}))`, color: `hsl(var(--card))`, boxShadow: `0 0 20px hsl(var(--${step.color}) / 0.5)` }}>{step.letter}</div>
+                    <h3 className="relative text-lg md:text-2xl lg:text-3xl font-black mb-1 md:mb-2">{step.title}</h3>
+                    <p className="relative text-xs md:text-sm lg:text-base font-bold mb-2 md:mb-4" style={{ color: `hsl(var(--${step.color}))` }}>{step.subtitle}</p>
+                    <p className="relative text-xs md:text-sm lg:text-base text-foreground/70 font-medium mb-2 md:mb-4 leading-relaxed hidden md:block">{step.description}</p>
+                    <div className="relative pt-2 md:pt-4 border-t-2 hidden md:block" style={{ borderColor: `hsl(var(--${step.color}) / 0.3)` }}><p className="text-xs md:text-sm text-foreground/60 font-semibold">{step.symbolism}</p></div>
                   </div>
                 </div>
               );
