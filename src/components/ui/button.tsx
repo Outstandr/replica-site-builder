@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
@@ -9,12 +8,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        default: "bg-primary text-primary-foreground shadow-medium hover:bg-primary/90 hover:shadow-strong transition-all",
+        destructive: "bg-destructive text-destructive-foreground shadow-medium hover:bg-destructive/90 hover:shadow-strong",
+        outline: "border-2 border-input bg-background shadow-soft hover:bg-accent hover:text-accent-foreground hover:border-accent hover:shadow-medium transition-all",
+        secondary: "bg-secondary text-secondary-foreground shadow-medium hover:bg-secondary/90 hover:shadow-strong transition-all",
+        ghost: "hover:bg-accent/20 hover:text-accent-foreground transition-all",
         link: "text-primary underline-offset-4 hover:underline",
+        hero: "bg-gradient-to-r from-primary via-secondary to-accent text-white font-black shadow-neon hover:shadow-glow hover:scale-110 transition-all border-2 border-white/20 animate-gradient",
+        zen: "bg-gradient-to-br from-card to-primary/10 text-foreground font-bold border-3 border-primary/30 hover:border-primary shadow-medium hover:shadow-strong hover:scale-105 transition-all",
+        journey: "bg-gradient-to-r from-reset-rhythm via-reset-energy to-reset-transformation text-white font-black shadow-neon hover:shadow-glow hover:scale-110 transition-all animate-gradient",
       },
       size: {
         default: "h-10 px-4 py-2",
