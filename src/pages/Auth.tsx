@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslations } from '@/hooks/useTranslations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Mail, Lock, User, Loader2, Sparkles, Star, Heart, Zap } from 'lucide-react';
+import MobileLayout from '@/components/layout/MobileLayout';
+import { Eye, EyeOff, Mail, Lock, User, Loader2, Sparkles } from 'lucide-react';
 import { z } from 'zod';
 
 const emailSchema = z.string().email('Please enter a valid email address');
@@ -87,158 +88,137 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Animated Background Blobs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-br from-reset-r/20 to-reset-e/20 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 left-10 w-80 h-80 bg-gradient-to-br from-reset-s/20 to-reset-t/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-reset-e2/10 to-transparent rounded-full" />
-      </div>
-
-      {/* Grid Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
-
-      {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
-        <Sparkles className="absolute top-32 left-20 w-4 h-4 text-reset-r/30 animate-scale-pulse" style={{ animationDelay: '0s' }} />
-        <Star className="absolute top-48 right-32 w-3 h-3 text-reset-e/30 animate-scale-pulse" style={{ animationDelay: '1s' }} />
-        <Heart className="absolute bottom-32 left-1/4 w-4 h-4 text-reset-s/30 animate-scale-pulse" style={{ animationDelay: '2s' }} />
-        <Zap className="absolute top-1/3 right-20 w-3 h-3 text-reset-t/30 animate-scale-pulse" style={{ animationDelay: '3s' }} />
-      </div>
-
-      <div className="w-full max-w-md relative z-10">
-        {/* Logo */}
-        <div className="text-center mb-8 animate-bounce-in">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <Sparkles className="w-8 h-8 text-reset-r" />
-            <span className="text-2xl font-bold bg-gradient-reset bg-clip-text text-transparent">
-              RESET Blueprint
-            </span>
-          </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            {isLogin ? t.auth.signIn : t.auth.signUp}
-          </h1>
-          <p className="text-muted-foreground">
-            {isLogin ? t.auth.welcomeBack : t.auth.createAccount}
-          </p>
-        </div>
-
-        {/* Auth form */}
-        <div 
-          className="bg-card/80 backdrop-blur-xl border-2 rounded-2xl p-8 shadow-elegant animate-bounce-in"
-          style={{ 
-            borderColor: 'hsl(var(--reset-r))',
-            boxShadow: '0 8px 32px hsl(var(--reset-r) / 0.15)',
-            animationDelay: '100ms'
-          }}
-        >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {!isLogin && (
-              <div className="space-y-2 animate-fade-in">
-                <Label htmlFor="displayName" className="text-foreground">
-                  {t.auth.displayName}
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="displayName"
-                    type="text"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    placeholder="Your name"
-                    className="pl-10 bg-background/50 border-border/50 focus:border-reset-r"
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground">
-                {t.auth.email}
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                    setErrors((prev) => ({ ...prev, email: undefined }));
-                  }}
-                  placeholder="you@example.com"
-                  className={`pl-10 bg-background/50 border-border/50 focus:border-reset-r ${errors.email ? 'border-destructive' : ''}`}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground">
-                {t.auth.password}
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setErrors((prev) => ({ ...prev, password: undefined }));
-                  }}
-                  placeholder="••••••••"
-                  className={`pl-10 pr-10 bg-background/50 border-border/50 focus:border-reset-r ${errors.password ? 'border-destructive' : ''}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password}</p>
-              )}
-            </div>
-
-            <Button
-              type="submit"
-              variant="hero"
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  {isLogin ? 'Signing in...' : 'Creating account...'}
-                </>
-              ) : (
-                isLogin ? t.auth.signIn : t.auth.signUp
-              )}
-            </Button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-muted-foreground">
-              {isLogin ? t.auth.noAccount : t.auth.hasAccount}{' '}
-              <button
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setErrors({});
-                }}
-                className="text-reset-r hover:text-reset-e transition-colors font-medium"
-              >
-                {isLogin ? t.auth.signUp : t.auth.signIn}
-              </button>
+    <MobileLayout showBottomNav={false}>
+      <div className="min-h-screen flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md">
+          {/* Logo */}
+          <div className="text-center mb-8 animate-fade-in-up">
+            <Link to="/" className="inline-flex items-center gap-2 mb-4">
+              <Sparkles className="w-8 h-8 text-primary" />
+              <span className="text-2xl font-bold gradient-text">
+                RESET Blueprint
+              </span>
+            </Link>
+            <h1 className="text-2xl font-bold text-foreground mb-2">
+              {isLogin ? t.auth.signIn : t.auth.signUp}
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              {isLogin ? t.auth.welcomeBack : t.auth.createAccount}
             </p>
           </div>
+
+          {/* Auth form */}
+          <div 
+            className="bg-card/50 backdrop-blur-xl border-2 border-primary/20 rounded-2xl p-6 shadow-soft animate-fade-in-up"
+            style={{ animationDelay: '100ms' }}
+          >
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="displayName" className="text-sm">
+                    {t.auth.displayName}
+                  </Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Input
+                      id="displayName"
+                      type="text"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      placeholder="Your name"
+                      className="pl-10 h-12 bg-background/50"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm">
+                  {t.auth.email}
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setErrors((prev) => ({ ...prev, email: undefined }));
+                    }}
+                    placeholder="you@example.com"
+                    className={`pl-10 h-12 bg-background/50 ${errors.email ? 'border-destructive' : ''}`}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-sm text-destructive">{errors.email}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm">
+                  {t.auth.password}
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setErrors((prev) => ({ ...prev, password: undefined }));
+                    }}
+                    placeholder="••••••••"
+                    className={`pl-10 pr-10 h-12 bg-background/50 ${errors.password ? 'border-destructive' : ''}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive">{errors.password}</p>
+                )}
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-12 text-base"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    {isLogin ? 'Signing in...' : 'Creating account...'}
+                  </>
+                ) : (
+                  isLogin ? t.auth.signIn : t.auth.signUp
+                )}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-muted-foreground text-sm">
+                {isLogin ? t.auth.noAccount : t.auth.hasAccount}{' '}
+                <button
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setErrors({});
+                  }}
+                  className="text-primary hover:text-primary/80 transition-colors font-medium"
+                >
+                  {isLogin ? t.auth.signUp : t.auth.signIn}
+                </button>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </MobileLayout>
   );
 };
 

@@ -22,9 +22,10 @@ export const translations = {
     nav: {
       home: "Home",
       dashboard: "Dashboard",
+      modules: "Modules",
       journal: "Journal",
       profile: "Profile",
-      masterclasses: "Masterclass Library",
+      masterclasses: "Library",
     },
     auth: {
       signIn: "Sign In",
@@ -295,9 +296,10 @@ export const translations = {
     nav: {
       home: "Home",
       dashboard: "Dashboard",
+      modules: "Modules",
       journal: "Dagboek",
       profile: "Profiel",
-      masterclasses: "Masterclass Bibliotheek",
+      masterclasses: "Bibliotheek",
     },
     auth: {
       signIn: "Inloggen",
@@ -568,9 +570,10 @@ export const translations = {
     nav: {
       home: "Главная",
       dashboard: "Панель",
+      modules: "Модули",
       journal: "Дневник",
       profile: "Профиль",
-      masterclasses: "Библиотека Мастер-классов",
+      masterclasses: "Библиотека",
     },
     auth: {
       signIn: "Войти",

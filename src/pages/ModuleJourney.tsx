@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { ChevronLeft, Play, Lock, CheckCircle, Star, Trophy, BookOpen } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Play, Lock, CheckCircle, Star, Trophy, BookOpen } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslations } from "@/hooks/useTranslations";
 import { useModuleProgress } from "@/hooks/useModuleProgress";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import ProgressPath from "@/components/ProgressPath";
+import MobileLayout from "@/components/layout/MobileLayout";
+import MobileHeader from "@/components/layout/MobileHeader";
+import SkeletonCard from "@/components/mobile/SkeletonCard";
 import { cn } from "@/lib/utils";
 
 interface Lesson {
@@ -72,7 +75,6 @@ const ModuleJourney = () => {
     const progress = lessonProgress.find(p => p.lesson_id === lessonId);
     if (progress?.completed) return "completed";
     
-    // First lesson is always available, others require previous to be completed
     if (index === 0) return "available";
     
     const prevLesson = lessons[index - 1];
@@ -103,43 +105,38 @@ const ModuleJourney = () => {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-primary">Loading...</div>
-      </div>
+      <MobileLayout showBottomNav={false}>
+        <MobileHeader 
+          title={config.title} 
+          subtitle="Loading..." 
+          backPath="/dashboard"
+          accentColor={config.color}
+        />
+        <main className="px-4 py-6 space-y-4">
+          <SkeletonCard variant="module" />
+          <div className="space-y-3">
+            {[1, 2, 3, 4].map(i => (
+              <SkeletonCard key={i} variant="lesson" />
+            ))}
+          </div>
+        </main>
+      </MobileLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header 
-        className="sticky top-0 z-50 backdrop-blur-xl border-b"
-        style={{ 
-          backgroundColor: `${config.color}10`,
-          borderColor: `${config.color}30`
-        }}
-      >
-        <div className="container max-w-4xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
-              <ChevronLeft className="w-5 h-5" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold" style={{ color: config.color }}>
-                {config.title}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                {completedLessons}/{totalLessons} lessons • {progressPercentage}% complete
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+    <MobileLayout showBottomNav={false}>
+      <MobileHeader 
+        title={config.title} 
+        subtitle={`${completedLessons}/${totalLessons} lessons • ${progressPercentage}% complete`}
+        backPath="/dashboard"
+        accentColor={config.color}
+      />
 
-      <main className="container max-w-4xl mx-auto px-4 py-8">
+      <main className="px-4 py-6">
         {/* Progress overview */}
         <div 
-          className="mb-8 p-6 rounded-2xl border-2"
+          className="mb-6 p-5 rounded-2xl border-2 animate-fade-in-up"
           style={{ 
             borderColor: `${config.color}30`,
             background: `linear-gradient(135deg, ${config.color}05, ${config.color}10)`
@@ -177,8 +174,8 @@ const ModuleJourney = () => {
         </div>
 
         {/* Lesson path */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-foreground mb-6">Lesson Journey</h3>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-foreground mb-4">Lesson Journey</h3>
           <ProgressPath 
             nodes={pathNodes} 
             onNodeClick={handleNodeClick}
@@ -186,7 +183,7 @@ const ModuleJourney = () => {
         </div>
 
         {/* Lesson cards */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {lessons.map((lesson, index) => {
             const status = getLessonStatus(lesson.id, index);
             const isLocked = status === "locked";
@@ -197,16 +194,17 @@ const ModuleJourney = () => {
                 key={lesson.id}
                 onClick={() => !isLocked && handleNodeClick({ id: lesson.id, status })}
                 className={cn(
-                  "p-4 rounded-xl border-2 transition-all",
-                  isLocked ? "opacity-60 cursor-not-allowed" : "cursor-pointer hover:shadow-md",
+                  "p-4 rounded-xl border-2 transition-all duration-200 animate-fade-in-up",
+                  isLocked ? "opacity-60" : "active:scale-[0.98]",
                   isCompleted && "border-accent/50 bg-accent/5",
-                  !isLocked && !isCompleted && "border-border hover:border-primary/30"
+                  !isLocked && !isCompleted && "border-border hover:border-primary/30 bg-card/50"
                 )}
+                style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-center gap-4">
                   <div 
                     className={cn(
-                      "w-10 h-10 rounded-lg flex items-center justify-center font-bold",
+                      "w-11 h-11 rounded-xl flex items-center justify-center font-bold text-sm shrink-0",
                       isLocked && "bg-muted text-muted-foreground",
                       isCompleted && "bg-accent text-accent-foreground",
                       !isLocked && !isCompleted && "bg-primary/20 text-primary"
@@ -217,12 +215,12 @@ const ModuleJourney = () => {
                      lesson.lesson_number}
                   </div>
                   
-                  <div className="flex-1">
-                    <h4 className="font-medium text-foreground">{lesson.title}</h4>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-foreground truncate">{lesson.title}</h4>
                     {lesson.description && (
                       <p className="text-sm text-muted-foreground line-clamp-1">{lesson.description}</p>
                     )}
-                    <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
                       {lesson.duration_minutes && (
                         <span>{lesson.duration_minutes} min</span>
                       )}
@@ -239,7 +237,7 @@ const ModuleJourney = () => {
           })}
         </div>
       </main>
-    </div>
+    </MobileLayout>
   );
 };
 

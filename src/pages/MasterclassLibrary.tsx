@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ChevronLeft, Play, BookOpen, Clock, Star, Trophy } from "lucide-react";
+import { Play, BookOpen, Clock, Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslations } from "@/hooks/useTranslations";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import MobileLayout from "@/components/layout/MobileLayout";
+import MobileHeader from "@/components/layout/MobileHeader";
+import SkeletonCard from "@/components/mobile/SkeletonCard";
 import { cn } from "@/lib/utils";
 
 interface Module {
@@ -46,13 +48,11 @@ const MasterclassLibrary = () => {
       try {
         const enrichedModules = await Promise.all(
           modules.map(async (mod) => {
-            // Get lesson count
             const { count: lessonCount } = await supabase
               .from("masterclass_lessons")
               .select("*", { count: "exact", head: true })
               .eq("module_name", mod.name);
 
-            // Get completed count
             const { data: lessons } = await supabase
               .from("masterclass_lessons")
               .select("id")
@@ -88,60 +88,57 @@ const MasterclassLibrary = () => {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-primary">Loading...</div>
-      </div>
+      <MobileLayout>
+        <MobileHeader 
+          title={translations.nav.masterclasses} 
+          subtitle="Access all your learning content"
+        />
+        <main className="px-4 py-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5].map(i => (
+              <SkeletonCard key={i} variant="module" />
+            ))}
+          </div>
+        </main>
+      </MobileLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
-        <div className="container max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/dashboard")}>
-              <ChevronLeft className="w-5 h-5" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">
-                {translations.nav.masterclasses}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Access all your learning content
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+    <MobileLayout>
+      <MobileHeader 
+        title={translations.nav.masterclasses} 
+        subtitle="Access all your learning content"
+        showLogo
+      />
 
-      <main className="container max-w-6xl mx-auto px-4 py-8">
+      <main className="px-4 py-6">
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="video" className="flex items-center gap-2">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+          <TabsList className="grid w-full grid-cols-2 h-12 p-1 bg-muted/50">
+            <TabsTrigger value="video" className="flex items-center gap-2 h-full data-[state=active]:shadow-md">
               <Play className="w-4 h-4" />
-              Video Courses
+              <span className="hidden sm:inline">Video</span> Courses
             </TabsTrigger>
-            <TabsTrigger value="book" className="flex items-center gap-2">
+            <TabsTrigger value="book" className="flex items-center gap-2 h-full data-[state=active]:shadow-md">
               <BookOpen className="w-4 h-4" />
               E-Books
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="video" className="mt-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {modulesData.map((mod) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {modulesData.map((mod, index) => (
                 <Link
                   key={mod.name}
                   to={`/module/${mod.name}`}
-                  className="group"
+                  className="group animate-fade-in-up"
+                  style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div
-                    className="relative rounded-2xl border-2 p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                    className="relative rounded-2xl border-2 p-5 transition-all duration-300 hover:shadow-lg active:scale-[0.98] bg-card/50"
                     style={{
                       borderColor: `${mod.color}30`,
-                      background: `linear-gradient(135deg, ${mod.color}05, ${mod.color}10)`,
                     }}
                   >
                     <div
@@ -151,10 +148,10 @@ const MasterclassLibrary = () => {
                       <Play className="w-6 h-6" style={{ color: mod.color }} />
                     </div>
 
-                    <h3 className="text-lg font-bold text-foreground mb-2">
+                    <h3 className="text-lg font-bold text-foreground mb-1.5">
                       {mod.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground mb-4">
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                       {mod.description}
                     </p>
 
@@ -189,18 +186,18 @@ const MasterclassLibrary = () => {
           </TabsContent>
 
           <TabsContent value="book" className="mt-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {modulesData.map((mod) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {modulesData.map((mod, index) => (
                 <Link
                   key={mod.name}
                   to={`/book/${mod.name}`}
-                  className="group"
+                  className="group animate-fade-in-up"
+                  style={{ animationDelay: `${index * 50}ms` }}
                 >
                   <div
-                    className="relative rounded-2xl border-2 p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                    className="relative rounded-2xl border-2 p-5 transition-all duration-300 hover:shadow-lg active:scale-[0.98] bg-card/50"
                     style={{
                       borderColor: `${mod.color}30`,
-                      background: `linear-gradient(135deg, ${mod.color}05, ${mod.color}10)`,
                     }}
                   >
                     <div
@@ -210,7 +207,7 @@ const MasterclassLibrary = () => {
                       <BookOpen className="w-6 h-6" style={{ color: mod.color }} />
                     </div>
 
-                    <h3 className="text-lg font-bold text-foreground mb-2">
+                    <h3 className="text-lg font-bold text-foreground mb-1.5">
                       {mod.title} Book
                     </h3>
                     <p className="text-sm text-muted-foreground mb-4">
@@ -228,7 +225,7 @@ const MasterclassLibrary = () => {
           </TabsContent>
         </Tabs>
       </main>
-    </div>
+    </MobileLayout>
   );
 };
 

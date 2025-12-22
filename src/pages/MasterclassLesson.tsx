@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronLeft, CheckCircle, Play, Star } from "lucide-react";
+import { CheckCircle, Play, Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import VideoPlayer from "@/components/VideoPlayer";
 import QuizComponent from "@/components/quiz/QuizComponent";
 import InteractiveWrapper from "@/components/interactive/InteractiveWrapper";
+import MobileLayout from "@/components/layout/MobileLayout";
+import MobileHeader from "@/components/layout/MobileHeader";
+import SkeletonCard from "@/components/mobile/SkeletonCard";
 import { useToast } from "@/hooks/use-toast";
 import type { Json } from "@/integrations/supabase/types";
 
@@ -58,7 +61,6 @@ const MasterclassLesson = () => {
 
         if (lessonError) throw lessonError;
         
-        // Transform the data to match our interface
         const transformedLesson: Lesson | null = lessonData ? {
           ...lessonData,
           interactive_config: lessonData.interactive_config as Record<string, unknown> | null
@@ -75,7 +77,6 @@ const MasterclassLesson = () => {
 
         if (allError) throw allError;
         
-        // Transform all lessons
         const transformedLessons: Lesson[] = (allData || []).map(l => ({
           ...l,
           interactive_config: l.interactive_config as Record<string, unknown> | null
@@ -98,14 +99,12 @@ const MasterclassLesson = () => {
   const handleVideoProgress = (progress: number) => {
     setVideoProgress(progress);
     
-    // Show interactive at 50% progress
     if (progress >= 50 && lesson?.interactive_type && !showInteractive) {
       setShowInteractive(true);
     }
   };
 
   const handleVideoComplete = () => {
-    // Check if there's a quiz
     setShowQuiz(true);
   };
 
@@ -145,7 +144,6 @@ const MasterclassLesson = () => {
     if (!user || !lessonId) return;
 
     try {
-      // First check if record exists
       const { data: existing } = await supabase
         .from("user_lesson_progress")
         .select("id")
@@ -175,118 +173,119 @@ const MasterclassLesson = () => {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-primary">Loading...</div>
-      </div>
+      <MobileLayout showBottomNav={false}>
+        <MobileHeader 
+          title="Loading..." 
+          backPath={`/module/${moduleName}`}
+        />
+        <main className="px-4 py-6 space-y-4">
+          <div className="aspect-video rounded-xl bg-muted animate-pulse" />
+          <SkeletonCard />
+        </main>
+      </MobileLayout>
     );
   }
 
   if (!lesson) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <Play className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">Lesson not found</p>
-          <Button className="mt-4" onClick={() => navigate(`/module/${moduleName}`)}>
+      <MobileLayout showBottomNav={false}>
+        <MobileHeader 
+          title="Lesson Not Found" 
+          backPath={`/module/${moduleName}`}
+        />
+        <main className="px-4 py-12 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-6">
+            <Play className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <p className="text-muted-foreground mb-6">This lesson could not be found</p>
+          <Button onClick={() => navigate(`/module/${moduleName}`)}>
             Back to Module
           </Button>
-        </div>
-      </div>
+        </main>
+      </MobileLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
-        <div className="container max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={() => navigate(`/module/${moduleName}`)}>
-                <ChevronLeft className="w-5 h-5" />
-              </Button>
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  Lesson {lesson.lesson_number} of {allLessons.length}
-                </p>
-                <h1 className="text-lg font-bold text-foreground">{lesson.title}</h1>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Star className="w-4 h-4 text-gold" />
-              +100 XP
-            </div>
+    <MobileLayout showBottomNav={false}>
+      <MobileHeader 
+        title={lesson.title}
+        subtitle={`Lesson ${lesson.lesson_number} of ${allLessons.length}`}
+        backPath={`/module/${moduleName}`}
+        rightContent={
+          <div className="flex items-center gap-1.5 text-sm text-gold">
+            <Star className="w-4 h-4" />
+            +100 XP
           </div>
-        </div>
-      </header>
+        }
+      />
 
-      <main className="container max-w-6xl mx-auto px-4 py-8">
+      <main className="px-4 py-6">
         {showQuiz ? (
-          <QuizComponent
-            lessonId={lessonId!}
-            onComplete={handleQuizComplete}
-            onClose={() => {
-              if (nextLesson) {
-                navigate(`/masterclass/${moduleName}/${nextLesson.id}`);
-              } else {
-                navigate(`/module/${moduleName}`);
-              }
-            }}
-          />
+          <div className="animate-fade-in-up">
+            <QuizComponent
+              lessonId={lessonId!}
+              onComplete={handleQuizComplete}
+              onClose={() => {
+                if (nextLesson) {
+                  navigate(`/masterclass/${moduleName}/${nextLesson.id}`);
+                } else {
+                  navigate(`/module/${moduleName}`);
+                }
+              }}
+            />
+          </div>
         ) : (
-          <>
+          <div className="space-y-6 animate-fade-in-up">
             {/* Video Player */}
             {lesson.video_url && (
-              <div className="mb-8">
-                <VideoPlayer
-                  src={lesson.video_url}
-                  startTime={lesson.video_start_time || 0}
-                  endTime={lesson.video_end_time || undefined}
-                  onProgress={handleVideoProgress}
-                  onComplete={handleVideoComplete}
-                  subtitles={[
-                    ...(lesson.subtitle_en_url ? [{ src: lesson.subtitle_en_url, label: "English", language: "en" }] : []),
-                    ...(lesson.subtitle_nl_url ? [{ src: lesson.subtitle_nl_url, label: "Dutch", language: "nl" }] : []),
-                    ...(lesson.subtitle_ru_url ? [{ src: lesson.subtitle_ru_url, label: "Russian", language: "ru" }] : []),
-                  ]}
-                  className="rounded-2xl overflow-hidden shadow-lg"
-                />
-              </div>
+              <VideoPlayer
+                src={lesson.video_url}
+                startTime={lesson.video_start_time || 0}
+                endTime={lesson.video_end_time || undefined}
+                onProgress={handleVideoProgress}
+                onComplete={handleVideoComplete}
+                subtitles={[
+                  ...(lesson.subtitle_en_url ? [{ src: lesson.subtitle_en_url, label: "English", language: "en" }] : []),
+                  ...(lesson.subtitle_nl_url ? [{ src: lesson.subtitle_nl_url, label: "Dutch", language: "nl" }] : []),
+                  ...(lesson.subtitle_ru_url ? [{ src: lesson.subtitle_ru_url, label: "Russian", language: "ru" }] : []),
+                ]}
+                className="rounded-2xl overflow-hidden shadow-lg"
+              />
             )}
 
             {/* Interactive Exercise */}
             {showInteractive && lesson.interactive_type && lesson.interactive_config && (
-              <div className="mb-8">
-                <InteractiveWrapper
-                  config={{ 
-                    type: lesson.interactive_type,
-                    ...lesson.interactive_config 
-                  }}
-                  onComplete={handleInteractiveComplete}
-                />
-              </div>
+              <InteractiveWrapper
+                config={{ 
+                  type: lesson.interactive_type,
+                  ...lesson.interactive_config 
+                }}
+                onComplete={handleInteractiveComplete}
+              />
             )}
 
             {/* Lesson description */}
             {lesson.description && (
-              <div className="mb-8 p-6 rounded-xl bg-card border border-border">
+              <div className="p-5 rounded-xl bg-card/50 border border-border/50">
                 <h2 className="text-lg font-bold text-foreground mb-2">About This Lesson</h2>
                 <p className="text-muted-foreground">{lesson.description}</p>
               </div>
             )}
 
-            {/* Manual complete button (for videos without auto-complete) */}
-            <div className="flex justify-center">
-              <Button onClick={() => setShowQuiz(true)} size="lg">
-                <CheckCircle className="w-5 h-5 mr-2" />
-                Complete & Take Quiz
-              </Button>
-            </div>
-          </>
+            {/* Manual complete button */}
+            <Button 
+              onClick={() => setShowQuiz(true)} 
+              size="lg" 
+              className="w-full h-14 text-base"
+            >
+              <CheckCircle className="w-5 h-5 mr-2" />
+              Complete & Take Quiz
+            </Button>
+          </div>
         )}
       </main>
-    </div>
+    </MobileLayout>
   );
 };
 
