@@ -11,6 +11,12 @@ import Dashboard from "./pages/Dashboard";
 import Journal from "./pages/Journal";
 import Modules from "./pages/Modules";
 import Profile from "./pages/Profile";
+import ModuleJourney from "./pages/ModuleJourney";
+import BookLessons from "./pages/BookLessons";
+import BookLessonContent from "./pages/BookLessonContent";
+import MasterclassLibrary from "./pages/MasterclassLibrary";
+import MasterclassLesson from "./pages/MasterclassLesson";
+import Certificate from "./pages/Certificate";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +36,12 @@ const App = () => (
               <Route path="/journal" element={<Journal />} />
               <Route path="/modules" element={<Modules />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/masterclasses" element={<MasterclassLibrary />} />
+              <Route path="/module/:moduleName" element={<ModuleJourney />} />
+              <Route path="/masterclass/:moduleName/:lessonId" element={<MasterclassLesson />} />
+              <Route path="/book/:moduleName" element={<BookLessons />} />
+              <Route path="/book/:moduleName/:lessonId" element={<BookLessonContent />} />
+              <Route path="/certificate/:certificateId" element={<Certificate />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
