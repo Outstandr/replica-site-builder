@@ -17,7 +17,8 @@ import {
   Heart,
   Zap,
   Target,
-  BookOpen
+  BookOpen,
+  Star
 } from 'lucide-react';
 
 interface ModuleProgress {
@@ -168,11 +169,29 @@ const Modules = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated Background Blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-br from-reset-r/20 to-reset-e/20 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-40 left-10 w-80 h-80 bg-gradient-to-br from-reset-s/20 to-reset-t/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-br from-reset-e2/15 to-reset-r/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+      </div>
+
+      {/* Grid Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
+
+      {/* Floating Particles */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none hidden md:block">
+        <Sparkles className="absolute top-32 left-20 w-4 h-4 text-reset-r/30 animate-scale-pulse" style={{ animationDelay: '0s' }} />
+        <Star className="absolute top-48 right-32 w-3 h-3 text-reset-e/30 animate-scale-pulse" style={{ animationDelay: '1s' }} />
+        <Heart className="absolute bottom-64 left-1/4 w-4 h-4 text-reset-s/30 animate-scale-pulse" style={{ animationDelay: '2s' }} />
+        <Target className="absolute top-1/3 right-20 w-3 h-3 text-reset-t/30 animate-scale-pulse" style={{ animationDelay: '3s' }} />
+      </div>
+
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-2">
+        <div className="zen-container py-4 flex items-center justify-between">
+          <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <ChevronLeft className="w-5 h-5 text-muted-foreground" />
             <Sparkles className="w-6 h-6 text-reset-r" />
             <span className="text-xl font-bold bg-gradient-reset bg-clip-text text-transparent">
@@ -182,14 +201,14 @@ const Modules = () => {
           
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
-            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} className="hover:bg-reset-r/10">
               <LogOut className="w-5 h-5" />
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
+      <main className="zen-container py-8 max-w-4xl mx-auto relative z-10">
         {/* Module Journey */}
         <div className="space-y-4">
           {modules.map((module, index) => {
@@ -199,25 +218,39 @@ const Modules = () => {
             const isExpanded = expandedModule === module.id;
             
             return (
-              <div key={module.id} className="relative">
+              <div 
+                key={module.id} 
+                className="relative animate-bounce-in"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
                 {/* Connection Line */}
                 {index < modules.length - 1 && (
-                  <div className="absolute left-[26px] top-[60px] bottom-0 w-0.5 bg-gradient-to-b from-border to-transparent h-8 -mb-4" />
+                  <div 
+                    className="absolute left-[26px] top-[60px] bottom-0 w-0.5 h-8 -mb-4"
+                    style={{ background: `linear-gradient(to bottom, hsl(var(--${module.color})), transparent)` }}
+                  />
                 )}
                 
                 <div
-                  className={`bg-card/50 backdrop-blur border rounded-2xl overflow-hidden transition-all ${
+                  className={`bg-card/50 backdrop-blur border-2 rounded-2xl overflow-hidden transition-all ${
                     isUnlocked 
-                      ? 'border-border/50 hover:border-border cursor-pointer' 
-                      : 'border-border/20 opacity-60'
+                      ? 'hover:scale-[1.01] cursor-pointer' 
+                      : 'opacity-60'
                   }`}
+                  style={{ 
+                    borderColor: isUnlocked ? `hsl(var(--${module.color}))` : 'hsl(var(--border) / 0.3)',
+                    boxShadow: isUnlocked ? `0 4px 20px hsl(var(--${module.color}) / 0.1)` : 'none'
+                  }}
                 >
                   {/* Module Header */}
                   <div 
                     className="p-6 flex items-center gap-4"
                     onClick={() => isUnlocked && setExpandedModule(isExpanded ? null : module.id)}
                   >
-                    <div className={`w-14 h-14 rounded-xl bg-${module.color}/20 flex items-center justify-center shrink-0`}>
+                    <div 
+                      className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-all group-hover:scale-110"
+                      style={{ backgroundColor: `hsl(var(--${module.color}) / 0.2)` }}
+                    >
                       {isUnlocked ? (
                         <Icon className={`w-7 h-7 text-${module.color}`} />
                       ) : (
@@ -263,9 +296,12 @@ const Modules = () => {
                         {module.lessons.map((lesson, lessonIndex) => (
                           <div
                             key={lesson.id}
-                            className="flex items-center gap-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors cursor-pointer group"
+                            className="flex items-center gap-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors cursor-pointer group border border-border/30 hover:border-border/50"
                           >
-                            <div className={`w-8 h-8 rounded-full bg-${module.color}/20 flex items-center justify-center`}>
+                            <div 
+                              className="w-8 h-8 rounded-full flex items-center justify-center"
+                              style={{ backgroundColor: `hsl(var(--${module.color}) / 0.2)` }}
+                            >
                               <PlayCircle className={`w-4 h-4 text-${module.color}`} />
                             </div>
                             <div className="flex-1">

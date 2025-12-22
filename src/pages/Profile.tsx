@@ -18,7 +18,10 @@ import {
   User,
   Mail,
   Globe,
-  Edit2
+  Edit2,
+  Star,
+  Heart,
+  Zap
 } from 'lucide-react';
 
 interface Profile {
@@ -114,11 +117,29 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated Background Blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-br from-reset-r/20 to-reset-e/20 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-40 left-10 w-80 h-80 bg-gradient-to-br from-reset-s/20 to-reset-t/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-br from-reset-e2/15 to-reset-r/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+      </div>
+
+      {/* Grid Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
+
+      {/* Floating Particles */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none hidden md:block">
+        <Sparkles className="absolute top-32 left-20 w-4 h-4 text-reset-r/30 animate-scale-pulse" style={{ animationDelay: '0s' }} />
+        <Star className="absolute top-48 right-32 w-3 h-3 text-reset-e/30 animate-scale-pulse" style={{ animationDelay: '1s' }} />
+        <Heart className="absolute bottom-64 left-1/4 w-4 h-4 text-reset-s/30 animate-scale-pulse" style={{ animationDelay: '2s' }} />
+        <Zap className="absolute top-1/3 right-20 w-3 h-3 text-reset-t/30 animate-scale-pulse" style={{ animationDelay: '3s' }} />
+      </div>
+
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-2">
+        <div className="zen-container py-4 flex items-center justify-between">
+          <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <ChevronLeft className="w-5 h-5 text-muted-foreground" />
             <Sparkles className="w-6 h-6 text-reset-r" />
             <span className="text-xl font-bold bg-gradient-reset bg-clip-text text-transparent">
@@ -128,19 +149,28 @@ const Profile = () => {
           
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
-            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} className="hover:bg-reset-r/10">
               <LogOut className="w-5 h-5" />
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
+      <main className="zen-container py-8 max-w-2xl mx-auto relative z-10">
         {/* Profile Card */}
-        <div className="bg-card/50 backdrop-blur border border-border/50 rounded-2xl p-8">
+        <div 
+          className="bg-card/50 backdrop-blur border-2 rounded-2xl p-8 animate-bounce-in"
+          style={{ 
+            borderColor: 'hsl(var(--reset-r))',
+            boxShadow: '0 8px 32px hsl(var(--reset-r) / 0.15)'
+          }}
+        >
           {/* Avatar */}
           <div className="flex flex-col items-center mb-8">
-            <div className="w-24 h-24 rounded-full bg-gradient-reset flex items-center justify-center text-white text-3xl font-bold mb-4">
+            <div 
+              className="w-24 h-24 rounded-full bg-gradient-reset flex items-center justify-center text-white text-3xl font-bold mb-4 hover:scale-110 transition-transform cursor-pointer"
+              style={{ boxShadow: '0 0 40px hsl(var(--reset-r) / 0.4)' }}
+            >
               {profile.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
             </div>
             <h1 className="text-2xl font-bold text-foreground">
@@ -161,7 +191,7 @@ const Profile = () => {
                 value={profile.display_name || ''}
                 onChange={(e) => setProfile({ ...profile, display_name: e.target.value })}
                 disabled={!isEditing}
-                className="bg-background/50"
+                className="bg-background/50 border-border/50 focus:border-reset-r"
               />
             </div>
 
@@ -189,7 +219,7 @@ const Profile = () => {
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                 disabled={!isEditing}
                 placeholder="Tell us about yourself..."
-                className="bg-background/50 min-h-[100px]"
+                className="bg-background/50 min-h-[100px] border-border/50 focus:border-reset-r"
               />
             </div>
 
@@ -204,11 +234,12 @@ const Profile = () => {
                     key={lang}
                     onClick={() => isEditing && setProfile({ ...profile, preferred_language: lang })}
                     disabled={!isEditing}
-                    className={`px-4 py-2 rounded-lg transition-all ${
+                    className={`px-4 py-2 rounded-lg transition-all hover:scale-105 ${
                       profile.preferred_language === lang
-                        ? 'bg-reset-r text-white'
+                        ? 'bg-reset-r text-white shadow-lg'
                         : 'bg-muted text-muted-foreground hover:bg-muted/80'
                     } ${!isEditing ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    style={profile.preferred_language === lang ? { boxShadow: '0 4px 15px hsl(var(--reset-r) / 0.3)' } : {}}
                   >
                     {lang === 'en' ? 'English' : lang === 'nl' ? 'Nederlands' : 'Русский'}
                   </button>

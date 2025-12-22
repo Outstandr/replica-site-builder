@@ -23,7 +23,9 @@ import {
   Trash2,
   Edit2,
   Save,
-  X
+  X,
+  Star,
+  Zap
 } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -37,11 +39,11 @@ interface JournalEntry {
 }
 
 const moodIcons = {
-  happy: { icon: Smile, color: 'text-reset-s', bg: 'bg-reset-s/20' },
-  neutral: { icon: Meh, color: 'text-reset-e', bg: 'bg-reset-e/20' },
-  sad: { icon: Frown, color: 'text-reset-r', bg: 'bg-reset-r/20' },
-  energized: { icon: Sun, color: 'text-reset-e2', bg: 'bg-reset-e2/20' },
-  calm: { icon: Moon, color: 'text-reset-t', bg: 'bg-reset-t/20' },
+  happy: { icon: Smile, color: 'text-reset-s', bg: 'bg-reset-s/20', borderColor: 'reset-s' },
+  neutral: { icon: Meh, color: 'text-reset-e', bg: 'bg-reset-e/20', borderColor: 'reset-e' },
+  sad: { icon: Frown, color: 'text-reset-r', bg: 'bg-reset-r/20', borderColor: 'reset-r' },
+  energized: { icon: Sun, color: 'text-reset-e2', bg: 'bg-reset-e2/20', borderColor: 'reset-e2' },
+  calm: { icon: Moon, color: 'text-reset-t', bg: 'bg-reset-t/20', borderColor: 'reset-t' },
 };
 
 const Journal = () => {
@@ -177,11 +179,29 @@ const Journal = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Animated Background Blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-br from-reset-s/20 to-reset-e/20 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-40 left-10 w-80 h-80 bg-gradient-to-br from-reset-t/20 to-reset-r/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-br from-reset-e2/15 to-reset-s/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+      </div>
+
+      {/* Grid Overlay */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
+
+      {/* Floating Particles */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none hidden md:block">
+        <Sparkles className="absolute top-32 left-20 w-4 h-4 text-reset-s/30 animate-scale-pulse" style={{ animationDelay: '0s' }} />
+        <Star className="absolute top-48 right-32 w-3 h-3 text-reset-e/30 animate-scale-pulse" style={{ animationDelay: '1s' }} />
+        <Heart className="absolute bottom-64 left-1/4 w-4 h-4 text-reset-t/30 animate-scale-pulse" style={{ animationDelay: '2s' }} />
+        <Zap className="absolute top-1/3 right-20 w-3 h-3 text-reset-r/30 animate-scale-pulse" style={{ animationDelay: '3s' }} />
+      </div>
+
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-2">
+        <div className="zen-container py-4 flex items-center justify-between">
+          <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <ChevronLeft className="w-5 h-5 text-muted-foreground" />
             <Sparkles className="w-6 h-6 text-reset-r" />
             <span className="text-xl font-bold bg-gradient-reset bg-clip-text text-transparent">
@@ -191,19 +211,19 @@ const Journal = () => {
           
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
-            <Button variant="ghost" size="icon" onClick={handleSignOut}>
+            <Button variant="ghost" size="icon" onClick={handleSignOut} className="hover:bg-reset-r/10">
               <LogOut className="w-5 h-5" />
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-3xl">
+      <main className="zen-container py-8 max-w-3xl mx-auto relative z-10">
         {/* New Entry Button */}
         {!isWriting && (
           <Button 
             variant="hero" 
-            className="w-full mb-8"
+            className="w-full mb-8 animate-bounce-in"
             onClick={() => setIsWriting(true)}
           >
             <Plus className="w-5 h-5 mr-2" />
@@ -213,7 +233,13 @@ const Journal = () => {
 
         {/* Writing Mode */}
         {isWriting && (
-          <div className="bg-card/50 backdrop-blur border border-border/50 rounded-2xl p-6 mb-8 animate-fade-in">
+          <div 
+            className="bg-card/50 backdrop-blur border-2 rounded-2xl p-6 mb-8 animate-bounce-in"
+            style={{ 
+              borderColor: 'hsl(var(--reset-s))',
+              boxShadow: '0 8px 32px hsl(var(--reset-s) / 0.15)'
+            }}
+          >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-foreground">
                 {editingId ? 'Edit Entry' : 'New Entry'}
@@ -226,6 +252,7 @@ const Journal = () => {
                   setEditingId(null);
                   setNewEntry({ title: '', content: '', mood: 'neutral' });
                 }}
+                className="hover:bg-reset-r/10"
               >
                 <X className="w-5 h-5" />
               </Button>
@@ -235,14 +262,14 @@ const Journal = () => {
               placeholder="Entry title (optional)"
               value={newEntry.title}
               onChange={(e) => setNewEntry({ ...newEntry, title: e.target.value })}
-              className="mb-4 bg-background/50 border-border/50"
+              className="mb-4 bg-background/50 border-border/50 focus:border-reset-s"
             />
 
             <Textarea
               placeholder="Write your thoughts..."
               value={newEntry.content}
               onChange={(e) => setNewEntry({ ...newEntry, content: e.target.value })}
-              className="mb-4 min-h-[200px] bg-background/50 border-border/50"
+              className="mb-4 min-h-[200px] bg-background/50 border-border/50 focus:border-reset-s"
             />
 
             {/* Mood Selector */}
@@ -253,7 +280,7 @@ const Journal = () => {
                   <button
                     key={mood}
                     onClick={() => setNewEntry({ ...newEntry, mood })}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all hover:scale-105 ${
                       newEntry.mood === mood 
                         ? `${bg} ${color} ring-2 ring-current` 
                         : 'bg-muted hover:bg-muted/80 text-muted-foreground'
@@ -276,20 +303,25 @@ const Journal = () => {
         {/* Entries List */}
         <div className="space-y-4">
           {entries.length === 0 && !isWriting ? (
-            <div className="text-center py-16">
+            <div className="text-center py-16 animate-bounce-in">
               <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-foreground mb-2">No entries yet</h3>
               <p className="text-muted-foreground">Start your journaling journey by creating your first entry</p>
             </div>
           ) : (
-            entries.map((entry) => {
+            entries.map((entry, index) => {
               const moodData = moodIcons[entry.mood as keyof typeof moodIcons] || moodIcons.neutral;
               const MoodIcon = moodData.icon;
               
               return (
                 <div
                   key={entry.id}
-                  className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-6 hover:border-border transition-all group"
+                  className="bg-card/50 backdrop-blur border-2 rounded-xl p-6 hover:scale-[1.01] transition-all group animate-bounce-in"
+                  style={{ 
+                    borderColor: `hsl(var(--${moodData.borderColor}))`,
+                    boxShadow: `0 4px 20px hsl(var(--${moodData.borderColor}) / 0.1)`,
+                    animationDelay: `${index * 50}ms`
+                  }}
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
@@ -310,6 +342,7 @@ const Journal = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleEditEntry(entry)}
+                        className="hover:bg-reset-e/10"
                       >
                         <Edit2 className="w-4 h-4" />
                       </Button>
@@ -317,6 +350,7 @@ const Journal = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDeleteEntry(entry.id)}
+                        className="hover:bg-destructive/10"
                       >
                         <Trash2 className="w-4 h-4 text-destructive" />
                       </Button>
