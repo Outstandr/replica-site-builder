@@ -123,6 +123,11 @@ const Dashboard = () => {
           
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
+            <Link to="/profile">
+              <div className="w-8 h-8 rounded-full bg-gradient-reset flex items-center justify-center text-white text-sm font-bold cursor-pointer hover:ring-2 hover:ring-reset-r/50 transition-all">
+                {profile?.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
+              </div>
+            </Link>
             <Button variant="ghost" size="icon" onClick={handleSignOut}>
               <LogOut className="w-5 h-5" />
             </Button>
@@ -134,9 +139,11 @@ const Dashboard = () => {
         {/* Welcome section */}
         <section className="mb-12">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-full bg-gradient-reset flex items-center justify-center text-white text-2xl font-bold">
-              {profile?.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
-            </div>
+            <Link to="/profile">
+              <div className="w-16 h-16 rounded-full bg-gradient-reset flex items-center justify-center text-white text-2xl font-bold cursor-pointer hover:ring-4 hover:ring-reset-r/30 transition-all">
+                {profile?.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
+              </div>
+            </Link>
             <div>
               <h1 className="text-3xl font-bold text-foreground">
                 {t.dashboard.welcome}, {profile?.display_name || user?.email?.split('@')[0]}!
@@ -169,10 +176,11 @@ const Dashboard = () => {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-foreground mb-6">{t.dashboard.yourJourney}</h2>
           <div className="space-y-4">
-            {resetSteps.map((step, index) => (
-              <div
+            {resetSteps.map((step) => (
+              <Link
                 key={step.letter}
-                className="bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4 hover:border-border transition-all group cursor-pointer"
+                to="/modules"
+                className="block bg-card/50 backdrop-blur border border-border/50 rounded-xl p-4 hover:border-border transition-all group"
               >
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-xl bg-${step.color}/20 flex items-center justify-center`}>
@@ -194,7 +202,7 @@ const Dashboard = () => {
                   </div>
                   <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
