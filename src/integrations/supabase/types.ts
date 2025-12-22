@@ -68,6 +68,69 @@ export type Database = {
         }
         Relationships: []
       }
+      masterclass_lessons: {
+        Row: {
+          content: string | null
+          created_at: string
+          description: string | null
+          duration_minutes: number | null
+          id: string
+          interactive_config: Json | null
+          interactive_type: string | null
+          lesson_number: number
+          module_name: string
+          order_index: number
+          subtitle_en_url: string | null
+          subtitle_nl_url: string | null
+          subtitle_ru_url: string | null
+          title: string
+          updated_at: string
+          video_end_time: number | null
+          video_start_time: number | null
+          video_url: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          interactive_config?: Json | null
+          interactive_type?: string | null
+          lesson_number: number
+          module_name: string
+          order_index?: number
+          subtitle_en_url?: string | null
+          subtitle_nl_url?: string | null
+          subtitle_ru_url?: string | null
+          title: string
+          updated_at?: string
+          video_end_time?: number | null
+          video_start_time?: number | null
+          video_url?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          interactive_config?: Json | null
+          interactive_type?: string | null
+          lesson_number?: number
+          module_name?: string
+          order_index?: number
+          subtitle_en_url?: string | null
+          subtitle_nl_url?: string | null
+          subtitle_ru_url?: string | null
+          title?: string
+          updated_at?: string
+          video_end_time?: number | null
+          video_start_time?: number | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -100,6 +163,136 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      quiz_questions: {
+        Row: {
+          correct_answer: string
+          created_at: string
+          explanation: string | null
+          id: string
+          lesson_id: string
+          options: Json | null
+          order_number: number
+          points: number | null
+          question_text: string
+          question_type: string
+          updated_at: string
+        }
+        Insert: {
+          correct_answer: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          lesson_id: string
+          options?: Json | null
+          order_number?: number
+          points?: number | null
+          question_text: string
+          question_type?: string
+          updated_at?: string
+        }
+        Update: {
+          correct_answer?: string
+          created_at?: string
+          explanation?: string | null
+          id?: string
+          lesson_id?: string
+          options?: Json | null
+          order_number?: number
+          points?: number | null
+          question_text?: string
+          question_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "masterclass_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_certificates: {
+        Row: {
+          certificate_number: string
+          completed_at: string
+          created_at: string
+          id: string
+          module_name: string
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          certificate_number: string
+          completed_at?: string
+          created_at?: string
+          id?: string
+          module_name: string
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          certificate_number?: string
+          completed_at?: string
+          created_at?: string
+          id?: string
+          module_name?: string
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_lesson_progress: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          interactive_responses: Json | null
+          lesson_id: string
+          quiz_score: number | null
+          started_at: string | null
+          updated_at: string
+          user_id: string
+          video_progress: number | null
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          interactive_responses?: Json | null
+          lesson_id: string
+          quiz_score?: number | null
+          started_at?: string | null
+          updated_at?: string
+          user_id: string
+          video_progress?: number | null
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          interactive_responses?: Json | null
+          lesson_id?: string
+          quiz_score?: number | null
+          started_at?: string | null
+          updated_at?: string
+          user_id?: string
+          video_progress?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "masterclass_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_progress: {
         Row: {
