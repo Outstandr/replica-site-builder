@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslations } from '@/hooks/useTranslations';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import MobileLayout from '@/components/layout/MobileLayout';
+import MobileHeader from '@/components/layout/MobileHeader';
+import PageTransition from '@/components/layout/PageTransition';
+import SkeletonCard from '@/components/mobile/SkeletonCard';
+import { Button } from '@/components/ui/button';
 import { 
   Sparkles,
-  LogOut,
-  ChevronLeft,
   ChevronRight,
   Lock,
   CheckCircle2,
@@ -17,8 +18,7 @@ import {
   Heart,
   Zap,
   Target,
-  BookOpen,
-  Star
+  BookOpen
 } from 'lucide-react';
 
 interface ModuleProgress {
@@ -33,9 +33,9 @@ const modules = [
     letter: 'R',
     title: 'Rhythm',
     subtitle: 'The Reset in You',
-    description: 'Build a strong foundation through structure and rhythm. Learn to create daily rituals that transform your life.',
+    description: 'Build a strong foundation through structure and rhythm.',
     icon: Brain,
-    color: 'reset-r',
+    color: 'primary',
     lessons: [
       { id: 'r1', title: 'Introduction to Rhythm', duration: '15 min' },
       { id: 'r2', title: 'Morning Rituals', duration: '20 min' },
@@ -48,9 +48,9 @@ const modules = [
     letter: 'E',
     title: 'Energy',
     subtitle: 'Reset Your Addiction',
-    description: 'Break through blockages and reclaim your vital power. Master your energy and overcome limiting patterns.',
+    description: 'Break through blockages and reclaim your vital power.',
     icon: Zap,
-    color: 'reset-e',
+    color: 'secondary',
     lessons: [
       { id: 'e1', title: 'Understanding Energy', duration: '20 min' },
       { id: 'e2', title: 'Breaking Patterns', duration: '25 min' },
@@ -63,9 +63,9 @@ const modules = [
     letter: 'S',
     title: 'Systems',
     subtitle: 'Reset the Love in You',
-    description: 'Emotional growth and conscious connection. Create sustainable systems for relationships and self-love.',
+    description: 'Emotional growth and conscious connection.',
     icon: Heart,
-    color: 'reset-s',
+    color: 'accent',
     lessons: [
       { id: 's1', title: 'Systems of Love', duration: '20 min' },
       { id: 's2', title: 'Emotional Intelligence', duration: '25 min' },
@@ -78,9 +78,9 @@ const modules = [
     letter: 'E',
     title: 'Execution',
     subtitle: 'Reset by Discipline',
-    description: 'Put leadership and consistency into practice. Master the art of disciplined action and achievement.',
+    description: 'Put leadership and consistency into practice.',
     icon: Target,
-    color: 'reset-e2',
+    color: 'primary',
     lessons: [
       { id: 'ex1', title: 'The Power of Discipline', duration: '20 min' },
       { id: 'ex2', title: 'Action Framework', duration: '25 min' },
@@ -93,9 +93,9 @@ const modules = [
     letter: 'T',
     title: 'Transformation',
     subtitle: 'Reset the Trust in You',
-    description: 'Identity, mastery, and the embodiment of trust. Complete your transformation into your highest self.',
+    description: 'Identity, mastery, and the embodiment of trust.',
     icon: Sparkles,
-    color: 'reset-t',
+    color: 'secondary',
     lessons: [
       { id: 't1', title: 'Identity Shift', duration: '25 min' },
       { id: 't2', title: 'Trust Framework', duration: '25 min' },
@@ -106,7 +106,7 @@ const modules = [
 ];
 
 const Modules = () => {
-  const { user, signOut, loading } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const t = useTranslations();
   const [progress, setProgress] = useState<Record<string, ModuleProgress>>({});
@@ -153,180 +153,136 @@ const Modules = () => {
     return progress[prevModule.id]?.completed || false;
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
   if (loading || isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse text-reset-r">
-          <Sparkles className="w-12 h-12" />
+      <MobileLayout>
+        <MobileHeader title="RESET Modules" backPath="/dashboard" />
+        <div className="px-4 py-6 space-y-4">
+          {[1, 2, 3, 4, 5].map(i => <SkeletonCard key={i} variant="module" />)}
         </div>
-      </div>
+      </MobileLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated Background Blobs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 right-10 w-96 h-96 bg-gradient-to-br from-reset-r/20 to-reset-e/20 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-40 left-10 w-80 h-80 bg-gradient-to-br from-reset-s/20 to-reset-t/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-gradient-to-br from-reset-e2/15 to-reset-r/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
-      </div>
+    <MobileLayout>
+      <MobileHeader title="RESET Modules" backPath="/dashboard" showLogo />
 
-      {/* Grid Overlay */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
-
-      {/* Floating Particles */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none hidden md:block">
-        <Sparkles className="absolute top-32 left-20 w-4 h-4 text-reset-r/30 animate-scale-pulse" style={{ animationDelay: '0s' }} />
-        <Star className="absolute top-48 right-32 w-3 h-3 text-reset-e/30 animate-scale-pulse" style={{ animationDelay: '1s' }} />
-        <Heart className="absolute bottom-64 left-1/4 w-4 h-4 text-reset-s/30 animate-scale-pulse" style={{ animationDelay: '2s' }} />
-        <Target className="absolute top-1/3 right-20 w-3 h-3 text-reset-t/30 animate-scale-pulse" style={{ animationDelay: '3s' }} />
-      </div>
-
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="zen-container py-4 flex items-center justify-between">
-          <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <ChevronLeft className="w-5 h-5 text-muted-foreground" />
-            <Sparkles className="w-6 h-6 text-reset-r" />
-            <span className="text-xl font-bold bg-gradient-reset bg-clip-text text-transparent">
-              RESET Modules
-            </span>
-          </Link>
-          
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher />
-            <Button variant="ghost" size="icon" onClick={handleSignOut} className="hover:bg-reset-r/10">
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="zen-container py-8 max-w-4xl mx-auto relative z-10">
-        {/* Module Journey */}
-        <div className="space-y-4">
-          {modules.map((module, index) => {
-            const Icon = module.icon;
-            const isUnlocked = isModuleUnlocked(index);
-            const moduleProgress = progress[module.id];
-            const isExpanded = expandedModule === module.id;
-            
-            return (
-              <div 
-                key={module.id} 
-                className="relative animate-bounce-in"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Connection Line */}
-                {index < modules.length - 1 && (
-                  <div 
-                    className="absolute left-[26px] top-[60px] bottom-0 w-0.5 h-8 -mb-4"
-                    style={{ background: `linear-gradient(to bottom, hsl(var(--${module.color})), transparent)` }}
-                  />
-                )}
-                
-                <div
-                  className={`bg-card/50 backdrop-blur border-2 rounded-2xl overflow-hidden transition-all ${
-                    isUnlocked 
-                      ? 'hover:scale-[1.01] cursor-pointer' 
-                      : 'opacity-60'
-                  }`}
-                  style={{ 
-                    borderColor: isUnlocked ? `hsl(var(--${module.color}))` : 'hsl(var(--border) / 0.3)',
-                    boxShadow: isUnlocked ? `0 4px 20px hsl(var(--${module.color}) / 0.1)` : 'none'
-                  }}
+      <PageTransition>
+        <main className="px-4 py-6">
+          <div className="space-y-4">
+            {modules.map((module, index) => {
+              const Icon = module.icon;
+              const isUnlocked = isModuleUnlocked(index);
+              const moduleProgress = progress[module.id];
+              const isExpanded = expandedModule === module.id;
+              
+              return (
+                <div 
+                  key={module.id} 
+                  className="relative animate-fade-in-up"
+                  style={{ animationDelay: `${index * 80}ms` }}
                 >
-                  {/* Module Header */}
-                  <div 
-                    className="p-6 flex items-center gap-4"
-                    onClick={() => isUnlocked && setExpandedModule(isExpanded ? null : module.id)}
+                  {/* Connection Line */}
+                  {index < modules.length - 1 && (
+                    <div className="absolute left-7 top-[72px] w-0.5 h-6 bg-gradient-to-b from-primary/30 to-transparent" />
+                  )}
+                  
+                  <div
+                    className={`bg-card/80 backdrop-blur-sm border-2 rounded-2xl overflow-hidden transition-all shadow-soft ${
+                      isUnlocked 
+                        ? 'hover:scale-[1.01] active:scale-[0.99]' 
+                        : 'opacity-60'
+                    }`}
+                    style={{ 
+                      borderColor: isUnlocked ? `hsl(var(--${module.color}))` : 'hsl(var(--border))',
+                    }}
                   >
-                    <div 
-                      className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 transition-all group-hover:scale-110"
-                      style={{ backgroundColor: `hsl(var(--${module.color}) / 0.2)` }}
+                    {/* Module Header */}
+                    <button 
+                      className="w-full p-5 flex items-center gap-4 text-left"
+                      onClick={() => isUnlocked && setExpandedModule(isExpanded ? null : module.id)}
+                      disabled={!isUnlocked}
                     >
-                      {isUnlocked ? (
-                        <Icon className={`w-7 h-7 text-${module.color}`} />
-                      ) : (
-                        <Lock className="w-6 h-6 text-muted-foreground" />
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className={`text-lg font-bold text-${module.color}`}>
-                          {module.letter}
-                        </span>
-                        <span className="font-semibold text-foreground">{module.title}</span>
-                        {moduleProgress?.completed && (
-                          <CheckCircle2 className="w-5 h-5 text-reset-s ml-auto" />
+                      <div 
+                        className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform ${isExpanded ? 'scale-110 rotate-3' : ''}`}
+                        style={{ backgroundColor: `hsl(var(--${module.color}) / 0.15)` }}
+                      >
+                        {isUnlocked ? (
+                          <Icon className={`w-7 h-7 text-${module.color}`} />
+                        ) : (
+                          <Lock className="w-6 h-6 text-muted-foreground" />
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground">{module.subtitle}</p>
                       
-                      {/* Progress Bar */}
-                      {isUnlocked && (
-                        <div className="mt-3 w-full h-2 bg-muted rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full bg-${module.color} transition-all`}
-                            style={{ width: `${moduleProgress?.progress_percentage || 0}%` }}
-                          />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className={`text-lg font-bold text-${module.color}`}>
+                            {module.letter}
+                          </span>
+                          <span className="font-semibold text-foreground truncate">{module.title}</span>
+                          {moduleProgress?.completed && (
+                            <CheckCircle2 className="w-5 h-5 text-accent ml-auto shrink-0" />
+                          )}
                         </div>
+                        <p className="text-sm text-muted-foreground truncate">{module.subtitle}</p>
+                        
+                        {isUnlocked && (
+                          <div className="mt-2 w-full h-2 bg-muted rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full bg-${module.color} rounded-full transition-all`}
+                              style={{ width: `${moduleProgress?.progress_percentage || 0}%` }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                      
+                      {isUnlocked && (
+                        <ChevronRight className={`w-5 h-5 text-muted-foreground transition-transform shrink-0 ${isExpanded ? 'rotate-90' : ''}`} />
                       )}
-                    </div>
-                    
-                    {isUnlocked && (
-                      <ChevronRight className={`w-5 h-5 text-muted-foreground transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                    </button>
+
+                    {/* Expanded Content */}
+                    {isExpanded && isUnlocked && (
+                      <div className="px-5 pb-5 animate-fade-in">
+                        <p className="text-foreground/80 mb-4 text-sm">{module.description}</p>
+                        
+                        <div className="space-y-2">
+                          {module.lessons.map((lesson, lessonIndex) => (
+                            <div
+                              key={lesson.id}
+                              className="flex items-center gap-3 p-3 rounded-xl bg-background/60 border border-border/50 hover:bg-background/80 transition-colors group"
+                            >
+                              <div 
+                                className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+                                style={{ backgroundColor: `hsl(var(--${module.color}) / 0.15)` }}
+                              >
+                                <PlayCircle className={`w-4 h-4 text-${module.color}`} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-foreground text-sm truncate">
+                                  {lesson.title}
+                                </p>
+                                <p className="text-xs text-muted-foreground">{lesson.duration}</p>
+                              </div>
+                              <BookOpen className="w-4 h-4 text-muted-foreground shrink-0" />
+                            </div>
+                          ))}
+                        </div>
+
+                        <Button className="w-full mt-4" size="lg">
+                          {moduleProgress?.progress_percentage > 0 ? t.dashboard.resumeModule : t.dashboard.startModule}
+                        </Button>
+                      </div>
                     )}
                   </div>
-
-                  {/* Expanded Content */}
-                  {isExpanded && isUnlocked && (
-                    <div className="px-6 pb-6 animate-fade-in">
-                      <p className="text-foreground/80 mb-6">{module.description}</p>
-                      
-                      {/* Lessons */}
-                      <div className="space-y-2">
-                        {module.lessons.map((lesson, lessonIndex) => (
-                          <div
-                            key={lesson.id}
-                            className="flex items-center gap-3 p-3 rounded-lg bg-background/50 hover:bg-background/80 transition-colors cursor-pointer group border border-border/30 hover:border-border/50"
-                          >
-                            <div 
-                              className="w-8 h-8 rounded-full flex items-center justify-center"
-                              style={{ backgroundColor: `hsl(var(--${module.color}) / 0.2)` }}
-                            >
-                              <PlayCircle className={`w-4 h-4 text-${module.color}`} />
-                            </div>
-                            <div className="flex-1">
-                              <p className="font-medium text-foreground group-hover:text-reset-r transition-colors">
-                                {lesson.title}
-                              </p>
-                              <p className="text-sm text-muted-foreground">{lesson.duration}</p>
-                            </div>
-                            <BookOpen className="w-4 h-4 text-muted-foreground" />
-                          </div>
-                        ))}
-                      </div>
-
-                      <Button variant="hero" className="w-full mt-6">
-                        {moduleProgress?.progress_percentage > 0 ? t.dashboard.resumeModule : t.dashboard.startModule}
-                      </Button>
-                    </div>
-                  )}
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      </main>
-    </div>
+              );
+            })}
+          </div>
+        </main>
+      </PageTransition>
+    </MobileLayout>
   );
 };
 
