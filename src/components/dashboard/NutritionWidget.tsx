@@ -1,22 +1,21 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Utensils } from 'lucide-react';
+import { useNutritionLogs, useNutritionStats } from '@/hooks/nutrition';
 
 export default function NutritionWidget() {
   const navigate = useNavigate();
-
-  // Mock data - will be replaced with real data from hooks
-  const consumed = 0;
-  const goal = 2000;
-  const remaining = goal - consumed;
-  const percentage = Math.min((consumed / goal) * 100, 100);
+  const { todayLogs, loading } = useNutritionLogs();
+  const stats = useNutritionStats({ todayLogs });
+  
+  const { totalCalories, calorieGoal, remainingCalories, calorieProgress } = stats;
 
   // SVG ring calculations - compact size
   const size = 72;
   const strokeWidth = 6;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const strokeDashoffset = circumference - (calorieProgress / 100) * circumference;
 
   return (
     <motion.div
@@ -76,15 +75,28 @@ export default function NutritionWidget() {
           {/* Center content */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <Utensils className="w-4 h-4 text-[#06B6D4]" />
-            <span className="text-sm font-bold text-white font-mono">{consumed}</span>
+            {loading ? (
+              <span className="text-sm font-bold text-white/50">...</span>
+            ) : (
+              <span className="text-sm font-bold text-white font-mono">{totalCalories}</span>
+            )}
           </div>
         </div>
 
         {/* Stats */}
         <div className="flex-1 min-w-0">
-          <p className="text-lg font-bold text-white">{consumed.toLocaleString()}</p>
-          <p className="text-[10px] text-slate-400">/ {goal.toLocaleString()} cal</p>
-          <p className="text-[10px] text-[#06B6D4] mt-1">{remaining} left</p>
+          {loading ? (
+            <div className="animate-pulse space-y-1">
+              <div className="h-5 bg-slate-700 rounded w-12" />
+              <div className="h-3 bg-slate-700 rounded w-16" />
+            </div>
+          ) : (
+            <>
+              <p className="text-lg font-bold text-white">{totalCalories.toLocaleString()}</p>
+              <p className="text-[10px] text-slate-400">/ {calorieGoal.toLocaleString()} cal</p>
+              <p className="text-[10px] text-[#06B6D4] mt-1">{remainingCalories} left</p>
+            </>
+          )}
         </div>
       </div>
     </motion.div>
