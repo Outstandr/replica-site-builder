@@ -9,19 +9,24 @@ import PageTransition from '@/components/layout/PageTransition';
 import LionelCoach from '@/components/LionelCoach';
 import StreakDialog from '@/components/StreakDialog';
 import XPDetailsDialog from '@/components/XPDetailsDialog';
+import JourneyCircle from '@/components/JourneyCircle';
+import QuickAccessCard from '@/components/QuickAccessCard';
+import DailyFocus from '@/components/DailyFocus';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import SkeletonCard from '@/components/mobile/SkeletonCard';
+import { cn } from '@/lib/utils';
 import { 
   BookOpen, 
   Brain, 
   Sparkles,
-  ChevronRight,
   Star,
   Flame,
   Target,
   Zap,
   Play,
-  Heart
+  Heart,
+  Library,
+  PenLine
 } from 'lucide-react';
 
 interface UserProgress {
@@ -48,6 +53,8 @@ const Dashboard = () => {
   const [xpDialogOpen, setXpDialogOpen] = useState(false);
   const [weeklyActivity, setWeeklyActivity] = useState<boolean[]>([true, true, true, false, false, false, false]);
   const [isLoading, setIsLoading] = useState(true);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const [activeStep, setActiveStep] = useState(0);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -80,12 +87,26 @@ const Dashboard = () => {
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id);
 
+      const completed = completedCount || 0;
+      const achievements = achievementCount || 0;
+
+      // Simulate which steps are completed based on progress
+      const stepsCompleted: number[] = [];
+      if (completed >= 1) stepsCompleted.push(0);
+      if (completed >= 2) stepsCompleted.push(1);
+      if (completed >= 3) stepsCompleted.push(2);
+      if (completed >= 4) stepsCompleted.push(3);
+      if (completed >= 5) stepsCompleted.push(4);
+      
+      setCompletedSteps(stepsCompleted);
+      setActiveStep(stepsCompleted.length);
+
       setProgress({
-        completed_modules: completedCount || 0,
-        total_achievements: achievementCount || 0,
+        completed_modules: completed,
+        total_achievements: achievements,
         streak_days: 3,
-        total_xp: (completedCount || 0) * 50 + (achievementCount || 0) * 100,
-        level: Math.floor(((completedCount || 0) * 50 + (achievementCount || 0) * 100) / 1000) + 1
+        total_xp: completed * 50 + achievements * 100,
+        level: Math.floor((completed * 50 + achievements * 100) / 1000) + 1
       });
       setIsLoading(false);
     };
@@ -103,30 +124,45 @@ const Dashboard = () => {
     );
   }
 
-  const resetSteps = [
-    { letter: 'R', title: t.journey.steps.r.title, color: 'reset-r', icon: Brain, progress: 25 },
-    { letter: 'E', title: t.journey.steps.e.title, color: 'reset-e', icon: Heart, progress: 0 },
-    { letter: 'S', title: t.journey.steps.s.title, color: 'reset-s', icon: Sparkles, progress: 0 },
-    { letter: 'E2', title: t.journey.steps.e2.title, color: 'reset-e2', icon: Zap, progress: 0 },
-    { letter: 'T', title: t.journey.steps.t.title, color: 'reset-t', icon: Target, progress: 0 },
-  ];
+  const journeyProgress = Math.round((completedSteps.length / 5) * 100);
 
-  const quickActions = [
-    { title: t.dashboard.continueLesson, icon: BookOpen, href: '/modules', color: 'primary' },
-    { title: t.dashboard.masterclassLibrary, icon: Play, href: '/masterclasses', color: 'secondary' },
-    { title: t.dashboard.journalEntry, icon: Star, href: '/journal', color: 'accent' },
+  const quickAccessItems = [
+    {
+      title: 'Masterclass Library',
+      description: 'Expert-led video lessons',
+      icon: Play,
+      href: '/masterclasses',
+      color: 'hsl(var(--secondary))',
+      gradient: 'linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--primary)))'
+    },
+    {
+      title: 'E-Reader',
+      description: 'Your wellness reading library',
+      icon: Library,
+      href: '/modules',
+      color: 'hsl(var(--primary))',
+      gradient: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))'
+    },
+    {
+      title: 'Journal',
+      description: 'Reflect on your journey',
+      icon: PenLine,
+      href: '/journal',
+      color: 'hsl(var(--accent))',
+      gradient: 'linear-gradient(135deg, hsl(var(--accent)), hsl(var(--secondary)))'
+    },
   ];
 
   return (
     <MobileLayout>
       <MobileHeader 
-        title={t.dashboard.welcome.replace('{name}', '')}
+        title="RESET"
         showLogo
         rightContent={<LanguageSwitcher />}
       />
 
       <PageTransition>
-        <main className="px-4 py-6 space-y-8">
+        <main className="px-4 py-6 space-y-8 pb-24">
           {/* Welcome Section */}
           <section className="animate-fade-in-up">
             <div className="flex items-center gap-4 mb-6">
@@ -179,70 +215,98 @@ const Dashboard = () => {
             )}
           </section>
 
-          {/* RESET Journey Progress */}
-          <section>
-            <h2 className="text-xl font-bold text-foreground mb-4">{t.dashboard.yourJourney}</h2>
-            <div className="space-y-3">
-              {resetSteps.map((step, index) => (
-                <Link
-                  key={step.letter}
-                  to="/modules"
-                  className="block animate-fade-in-up"
-                  style={{ animationDelay: `${index * 100}ms` }}
+          {/* Journey Circle Section */}
+          <section className="animate-fade-in-up animation-delay-100">
+            <div className="text-center mb-6">
+              <h2 className="text-xl font-bold text-foreground">{t.dashboard.yourJourney}</h2>
+              <p className="text-sm text-muted-foreground">Your path from structure to surrender</p>
+            </div>
+            
+            <div className="flex justify-center">
+              <JourneyCircle 
+                progress={journeyProgress}
+                size={240}
+                strokeWidth={10}
+                completedSteps={completedSteps}
+                activeStep={activeStep}
+              />
+            </div>
+
+            {/* Journey step labels */}
+            <div className="flex justify-center gap-2 mt-6 flex-wrap">
+              {[
+                { key: 'R', label: 'Rhythm', color: 'hsl(var(--reset-rhythm))' },
+                { key: 'E', label: 'Energy', color: 'hsl(var(--reset-energy))' },
+                { key: 'S', label: 'Systems', color: 'hsl(var(--reset-systems))' },
+                { key: 'E2', label: 'Execution', color: 'hsl(var(--reset-execution))' },
+                { key: 'T', label: 'Transformation', color: 'hsl(var(--reset-transformation))' },
+              ].map((step, index) => (
+                <div 
+                  key={step.key}
+                  className={cn(
+                    "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all",
+                    completedSteps.includes(index) ? "bg-card shadow-sm" : "opacity-60"
+                  )}
                 >
-                  <div className="bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl p-4 hover:scale-[1.02] active:scale-[0.98] transition-all group shadow-soft">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                        <step.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-lg font-bold text-primary">
-                            {step.letter.replace('2', '')}
-                          </span>
-                          <span className="font-medium text-foreground truncate">{step.title}</span>
-                        </div>
-                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary transition-all rounded-full"
-                            style={{ width: `${step.progress}%` }}
-                          />
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all shrink-0" />
-                    </div>
-                  </div>
-                </Link>
+                  <span 
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: step.color }}
+                  />
+                  <span className="text-muted-foreground">{step.label}</span>
+                </div>
               ))}
             </div>
           </section>
 
-          {/* Quick Actions */}
-          <section>
+          {/* Daily Focus Section */}
+          <section className="animate-fade-in-up animation-delay-200">
+            <DailyFocus />
+          </section>
+
+          {/* Quick Access Section */}
+          <section className="animate-fade-in-up animation-delay-300">
             <h2 className="text-xl font-bold text-foreground mb-4">{t.dashboard.quickActions}</h2>
-            <div className="grid grid-cols-1 gap-3">
-              {quickActions.map((action, index) => (
-                <Link
-                  key={action.title}
-                  to={action.href}
-                  className="animate-fade-in-up"
-                  style={{ animationDelay: `${(index + 5) * 100}ms` }}
-                >
-                  <div className={`bg-card/80 backdrop-blur-sm border-2 border-${action.color}/30 rounded-2xl p-5 hover:scale-[1.02] active:scale-[0.98] transition-all group shadow-soft`}>
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl bg-${action.color}/10 flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                        <action.icon className={`w-6 h-6 text-${action.color}`} />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground">{action.title}</h3>
-                        <p className="text-sm text-muted-foreground">{t.common.continue}</p>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
-                    </div>
-                  </div>
-                </Link>
+            <div className="space-y-3">
+              {quickAccessItems.map((item, index) => (
+                <QuickAccessCard
+                  key={item.title}
+                  {...item}
+                  className={cn(
+                    "animate-fade-in-up",
+                    `animation-delay-${(index + 4) * 100}`
+                  )}
+                />
               ))}
             </div>
+          </section>
+
+          {/* Continue Learning CTA */}
+          <section className="animate-fade-in-up animation-delay-500">
+            <Link to="/modules" className="block">
+              <div 
+                className={cn(
+                  "relative overflow-hidden rounded-2xl p-6",
+                  "bg-gradient-to-r from-primary via-secondary to-primary bg-[length:200%_100%]",
+                  "hover:bg-[position:100%_0] transition-all duration-700",
+                  "group shadow-glow"
+                )}
+              >
+                <div className="absolute inset-0 bg-grid-pattern opacity-10" />
+                <div className="relative flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-bold text-primary-foreground mb-1">
+                      {t.dashboard.continueLesson}
+                    </h3>
+                    <p className="text-primary-foreground/80 text-sm">
+                      Pick up where you left off
+                    </p>
+                  </div>
+                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Play className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                </div>
+              </div>
+            </Link>
           </section>
         </main>
       </PageTransition>
@@ -250,7 +314,7 @@ const Dashboard = () => {
       <LionelCoach 
         userName={profile?.display_name || undefined}
         currentModule="Rhythm"
-        progress={Math.round((progress.completed_modules / 5) * 100)}
+        progress={journeyProgress}
       />
 
       <StreakDialog
