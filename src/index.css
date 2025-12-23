@@ -100,6 +100,17 @@
 @layer base {
   * {
     @apply border-border;
+    /* Prevent text selection highlight on mobile */
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    /* Smooth scroll behavior */
+    scroll-behavior: smooth;
+    /* Prevent overscroll bounce on iOS */
+    overscroll-behavior: none;
+    /* Enable smooth momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
   }
 
   body {
@@ -108,16 +119,39 @@
     font-feature-settings: "kern" 1, "liga" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Prevent pull-to-refresh in app */
+    overscroll-behavior-y: contain;
+    /* Fix iOS height issues */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh;
+    /* Prevent text size adjustment */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   /* Make buttons feel "Fun" and tactile */
   button {
     @apply transition-transform active:scale-95 duration-200;
+    /* Prevent double-tap zoom on mobile */
+    touch-action: manipulation;
   }
 
-  /* Smooth scroll behavior */
-  html {
-    scroll-behavior: smooth;
+  /* Improve touch targets */
+  a, button, input, select, textarea {
+    touch-action: manipulation;
+  }
+
+  /* Prevent text selection on interactive elements */
+  button, a {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Scrollable containers */
+  .scroll-container {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 }
 
@@ -127,13 +161,107 @@
     @apply mx-auto px-4 md:px-6 lg:px-8 max-w-7xl;
   }
 
-  /* Safe Area Utilities */
+  /* Safe Area Utilities - Critical for notches and home indicators */
   .safe-area-top {
-    padding-top: env(safe-area-inset-top);
+    padding-top: env(safe-area-inset-top, 0px);
   }
 
   .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-area-left {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  .safe-area-right {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  .safe-area-inset {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Safe area for headers */
+  .header-safe {
+    padding-top: max(env(safe-area-inset-top, 0px), 1rem);
+  }
+
+  /* Safe area padding for bottom navigation */
+  .safe-area-pb {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem);
+  }
+
+  /* Full height accounting for mobile viewport */
+  .min-h-screen-safe {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh;
+  }
+
+  /* Touch-friendly scrolling */
+  .rubber-band-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: auto;
+  }
+
+  /* Prevent overscroll */
+  .no-overscroll {
+    overscroll-behavior: none;
+  }
+
+  /* Press effect for touch feedback */
+  .press-scale {
+    @apply transition-transform duration-150;
+  }
+
+  .press-scale:active {
+    transform: scale(0.97);
+  }
+
+  /* Touch-optimized tap target (minimum 44x44px) */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Horizontal scroll container */
+  .scroll-x {
+    @apply flex overflow-x-auto hide-scrollbar;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scroll-x > * {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+
+  /* Text glow effects */
+  .text-glow-cyan {
+    text-shadow: 0 0 10px hsl(186 100% 50% / 0.5), 0 0 20px hsl(186 100% 50% / 0.3);
+  }
+
+  /* Tactical card styling */
+  .tactical-card {
+    @apply bg-[hsl(210,20%,15%)] border border-[hsl(210,15%,25%)] backdrop-blur-sm;
+  }
+
+  .tactical-label {
+    @apply text-xs uppercase tracking-wider text-[hsl(210,10%,55%)] font-medium;
   }
 
   /* Journey Circle Animation */
