@@ -27,6 +27,7 @@ import {
   HotstepperProfile,
   HotstepperAudiobook,
   HotstepperProtocol,
+  HotstepperSetup,
 } from "./pages/hotstepper";
 
 // Nutrition Pages
@@ -66,6 +67,7 @@ const App = () => (
               
               {/* HotStepper Challenge Routes */}
               <Route path="/hotstepper" element={<HotstepperDashboard />} />
+              <Route path="/hotstepper/setup" element={<HotstepperSetup />} />
               <Route path="/hotstepper/active" element={<HotstepperActiveSession />} />
               <Route path="/hotstepper/leaderboard" element={<HotstepperLeaderboard />} />
               <Route path="/hotstepper/audiobook" element={<HotstepperAudiobook />} />

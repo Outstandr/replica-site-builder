@@ -2,6 +2,7 @@ import React from 'react';
 import { Flame, MapPin, Clock, Zap, Footprints } from 'lucide-react';
 import { HotstepperProgressRing } from './HotstepperProgressRing';
 import { HotstepperStatsCard } from './HotstepperStatsCard';
+import { AnimatedNumber, AnimatedDecimal } from './AnimatedNumber';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,9 +32,10 @@ export function HotstepperDayView({
       <HotstepperProgressRing progress={progress} size={220} strokeWidth={14}>
         <div className="flex flex-col items-center">
           <Footprints className="w-8 h-8 text-[hsl(186,100%,50%)] mb-2" />
-          <span className="text-4xl font-bold tabular-nums text-glow-cyan">
-            {steps.toLocaleString()}
-          </span>
+          <AnimatedNumber 
+            value={steps} 
+            className="text-4xl font-bold tabular-nums text-glow-cyan"
+          />
           <span className="text-sm text-[hsl(210,15%,55%)] mt-1">
             / {goal.toLocaleString()} steps
           </span>
