@@ -1,12 +1,18 @@
 import { useCallback, useState, useEffect } from 'react';
 import { GoogleMap, useJsApiLoader, Polyline, Marker } from '@react-google-maps/api';
-import { useGoogleMapsKey } from '@/hooks/useGoogleMapsKey';
 import { Loader2, MapPin } from 'lucide-react';
 
 interface RoutePoint {
   lat: number;
   lng: number;
   timestamp?: number;
+}
+
+interface GoogleMapContentProps {
+  apiKey: string;
+  routePoints: RoutePoint[];
+  currentPosition?: { lat: number; lng: number } | null;
+  isTracking?: boolean;
 }
 
 interface HotstepperMapProps {
@@ -72,18 +78,13 @@ const defaultCenter = {
   lng: 4.9041, // Amsterdam
 };
 
-export default function HotstepperMap({
-  routePoints = [],
-  currentPosition,
-  isTracking = false,
-  className = '',
-}: HotstepperMapProps) {
-  const { apiKey, loading: keyLoading, error: keyError } = useGoogleMapsKey();
+// Inner component that uses the Google Maps API (only rendered when apiKey is available)
+function GoogleMapContent({ apiKey, routePoints, currentPosition, isTracking }: GoogleMapContentProps) {
   const [map, setMap] = useState<google.maps.Map | null>(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: apiKey || '',
+    googleMapsApiKey: apiKey,
   });
 
   const onLoad = useCallback((map: google.maps.Map) => {
@@ -107,32 +108,9 @@ export default function HotstepperMap({
 
   const center = currentPosition || (routePoints.length > 0 ? routePoints[0] : defaultCenter);
 
-  if (keyLoading) {
-    return (
-      <div className={`flex items-center justify-center bg-[#1a1a2e] ${className}`}>
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mx-auto mb-2" />
-          <p className="text-sm text-slate-400">Loading map...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (keyError || !apiKey) {
-    return (
-      <div className={`flex items-center justify-center bg-[#1a1a2e] ${className}`}>
-        <div className="text-center p-4">
-          <MapPin className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-          <p className="text-sm text-slate-400">Map unavailable</p>
-          <p className="text-xs text-slate-500 mt-1">{keyError || 'API key not configured'}</p>
-        </div>
-      </div>
-    );
-  }
-
   if (loadError) {
     return (
-      <div className={`flex items-center justify-center bg-[#1a1a2e] ${className}`}>
+      <div className="flex items-center justify-center bg-[#1a1a2e] h-full w-full">
         <div className="text-center p-4">
           <MapPin className="w-8 h-8 text-red-400 mx-auto mb-2" />
           <p className="text-sm text-red-400">Failed to load map</p>
@@ -143,14 +121,14 @@ export default function HotstepperMap({
 
   if (!isLoaded) {
     return (
-      <div className={`flex items-center justify-center bg-[#1a1a2e] ${className}`}>
+      <div className="flex items-center justify-center bg-[#1a1a2e] h-full w-full">
         <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-xl ${className}`}>
+    <>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={center}
@@ -216,6 +194,82 @@ export default function HotstepperMap({
           <span className="text-xs text-white font-medium">TRACKING</span>
         </div>
       )}
+    </>
+  );
+}
+
+// Outer component that handles API key fetching
+export default function HotstepperMap({
+  routePoints = [],
+  currentPosition,
+  isTracking = false,
+  className = '',
+}: HotstepperMapProps) {
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchApiKey() {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-maps-key`,
+          {
+            headers: {
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+          }
+        );
+        
+        const data = await response.json();
+        
+        if (data?.apiKey) {
+          setApiKey(data.apiKey);
+        } else if (data?.error) {
+          setError(data.error);
+        }
+      } catch (err) {
+        console.error('Failed to fetch Google Maps API key:', err);
+        setError('Failed to load map configuration');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchApiKey();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className={`flex items-center justify-center bg-[#1a1a2e] ${className}`}>
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mx-auto mb-2" />
+          <p className="text-sm text-slate-400">Loading map...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !apiKey) {
+    return (
+      <div className={`flex items-center justify-center bg-[#1a1a2e] ${className}`}>
+        <div className="text-center p-4">
+          <MapPin className="w-8 h-8 text-slate-500 mx-auto mb-2" />
+          <p className="text-sm text-slate-400">Map unavailable</p>
+          <p className="text-xs text-slate-500 mt-1">{error || 'API key not configured'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`relative overflow-hidden rounded-xl ${className}`}>
+      <GoogleMapContent
+        apiKey={apiKey}
+        routePoints={routePoints}
+        currentPosition={currentPosition}
+        isTracking={isTracking}
+      />
     </div>
   );
 }
