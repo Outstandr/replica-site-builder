@@ -10,7 +10,7 @@ export default function HotstepperProtocol() {
     <HotstepperLayout>
       <header className="header-safe px-4 pb-4">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={() => navigate('/hotstepper')} className="p-2 rounded-lg hover:bg-[hsl(210,25%,20%)] press-scale">
+          <button onClick={() => navigate('/dashboard')} className="p-2 rounded-lg hover:bg-[hsl(210,25%,20%)] press-scale">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="text-xl font-bold uppercase tracking-wider">Protocol</h1>
