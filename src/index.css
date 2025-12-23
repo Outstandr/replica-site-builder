@@ -98,6 +98,21 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* ====== WARM/COOL DYNAMIC THEME (RGB format) ====== */
+    /* Default: Warm Theme - Sophisticated, grounded, nurturing */
+    --theme-bg: 250 249 246;
+    --theme-text: 74 66 56;
+    --theme-accent: 184 111 82;
+    --theme-secondary: 231 229 228;
+  }
+
+  /* Cool Theme Override - Focused, stoic, sharp */
+  .theme-cool {
+    --theme-bg: 15 23 42;
+    --theme-text: 226 232 240;
+    --theme-accent: 8 145 178;
+    --theme-secondary: 51 65 85;
   }
 
   .dark {
@@ -156,7 +171,7 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[rgb(var(--theme-bg))] text-[rgb(var(--theme-text))] transition-colors duration-300;
     font-feature-settings: "kern" 1, "liga" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

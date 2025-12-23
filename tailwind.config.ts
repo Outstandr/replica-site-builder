@@ -66,6 +66,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Dynamic Theme Colors (RGB-based for alpha support)
+        themeBg: "rgb(var(--theme-bg) / <alpha-value>)",
+        themeText: "rgb(var(--theme-text) / <alpha-value>)",
+        themeAccent: "rgb(var(--theme-accent) / <alpha-value>)",
+        themeSecondary: "rgb(var(--theme-secondary) / <alpha-value>)",
       },
       boxShadow: {
         'soft': 'var(--shadow-soft)',
