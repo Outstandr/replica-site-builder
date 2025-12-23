@@ -13,7 +13,7 @@ import JourneyCircle from '@/components/JourneyCircle';
 import QuickAccessCard from '@/components/QuickAccessCard';
 import DailyFocus from '@/components/DailyFocus';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import CommandCenterWidget from '@/components/dashboard/CommandCenterWidget';
+import HotStepperWidget from '@/components/dashboard/HotStepperWidget';
 import SkeletonCard from '@/components/mobile/SkeletonCard';
 import { cn } from '@/lib/utils';
 import { 
@@ -141,14 +141,6 @@ const Dashboard = () => {
       featured: true
     },
     {
-      title: 'HotStepper',
-      description: '10,000 steps challenge',
-      icon: Footprints,
-      href: '/hotstepper',
-      color: 'hsl(186, 100%, 50%)',
-      gradient: 'linear-gradient(135deg, hsl(186, 100%, 50%), hsl(186, 80%, 40%))'
-    },
-    {
       title: 'Ration Control',
       description: 'AI-powered calorie tracker',
       icon: UtensilsCrossed,
@@ -192,9 +184,9 @@ const Dashboard = () => {
 
       <PageTransition>
         <main className="px-4 py-6 space-y-8 pb-24">
-          {/* Command Center Widget */}
+          {/* HotStepper Widget */}
           <section className="animate-fade-in-up">
-            <CommandCenterWidget />
+            <HotStepperWidget />
           </section>
 
           {/* Welcome Section */}
