@@ -13,7 +13,7 @@ import JourneyCircle from '@/components/JourneyCircle';
 import QuickAccessCard from '@/components/QuickAccessCard';
 import DailyFocus from '@/components/DailyFocus';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-
+import CommandCenterWidget from '@/components/dashboard/CommandCenterWidget';
 import SkeletonCard from '@/components/mobile/SkeletonCard';
 import { cn } from '@/lib/utils';
 import { 
@@ -192,25 +192,32 @@ const Dashboard = () => {
 
       <PageTransition>
         <main className="px-4 py-6 space-y-8 pb-24">
-          {/* Welcome Section */}
+          {/* Command Center Widget */}
           <section className="animate-fade-in-up">
-            <div className="flex items-center gap-4 mb-6">
+            <CommandCenterWidget />
+          </section>
+
+          {/* Welcome Section */}
+          <section className="animate-fade-in-up animation-delay-100">
+            <div className="flex items-center gap-4">
               <Link to="/profile">
                 <div 
-                  className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground text-2xl font-bold shadow-glow hover:scale-110 transition-transform active:scale-95"
+                  className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground text-xl font-bold shadow-glow hover:scale-110 transition-transform active:scale-95"
                 >
                   {profile?.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || '?'}
                 </div>
               </Link>
               <div className="flex-1 min-w-0">
-                <h1 className="text-2xl font-bold text-foreground truncate">
+                <h1 className="text-xl font-bold text-foreground truncate">
                   {t.dashboard.welcome.replace('{name}', profile?.display_name || user?.email?.split('@')[0] || '')}
                 </h1>
                 <p className="text-muted-foreground text-sm">{t.dashboard.subtitle}</p>
               </div>
             </div>
+          </section>
 
-            {/* Stats Grid */}
+          {/* Stats Grid */}
+          <section className="animate-fade-in-up animation-delay-200">
             {isLoading ? (
               <div className="grid grid-cols-3 gap-3">
                 {[1, 2, 3].map(i => <SkeletonCard key={i} variant="stat" />)}
