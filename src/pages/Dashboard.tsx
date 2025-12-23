@@ -184,13 +184,8 @@ const Dashboard = () => {
 
       <PageTransition>
         <main className="px-4 py-6 space-y-8 pb-24">
-          {/* HotStepper Widget */}
-          <section className="animate-fade-in-up">
-            <HotStepperWidget />
-          </section>
-
           {/* Welcome Section */}
-          <section className="animate-fade-in-up animation-delay-100">
+          <section className="animate-fade-in-up">
             <div className="flex items-center gap-4">
               <Link to="/profile">
                 <div 
@@ -206,6 +201,11 @@ const Dashboard = () => {
                 <p className="text-muted-foreground text-sm">{t.dashboard.subtitle}</p>
               </div>
             </div>
+          </section>
+
+          {/* HotStepper Widget */}
+          <section className="animate-fade-in-up animation-delay-100">
+            <HotStepperWidget />
           </section>
 
           {/* Stats Grid */}
