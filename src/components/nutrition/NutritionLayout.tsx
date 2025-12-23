@@ -15,11 +15,11 @@ export default function NutritionLayout({
 }: NutritionLayoutProps) {
   return (
     <div className={cn(
-      "min-h-screen nutrition-theme",
+      "min-h-screen nutrition-theme bg-zinc-950 text-zinc-100",
       className
     )}>
-      {/* Subtle gradient overlay */}
-      <div className="fixed inset-0 gradient-nutrition pointer-events-none" />
+      {/* Tactical grid overlay */}
+      <div className="fixed inset-0 tactical-grid pointer-events-none opacity-50" />
       
       {/* Main content */}
       <div className={cn(

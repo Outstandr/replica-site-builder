@@ -37,9 +37,9 @@ export default function NutritionMacroCard({
   const colors = colorMap[color];
 
   return (
-    <div className="nutrition-card p-4">
+    <div className="nutrition-card-glow p-4 rounded-xl">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-zinc-500 text-xs uppercase tracking-wider">{label}</span>
+        <span className="text-zinc-400 text-xs uppercase tracking-wider">{label}</span>
         <span className={cn("text-xs", colors.text)}>
           {current}/{goal}{unit}
         </span>
@@ -62,7 +62,7 @@ export default function NutritionMacroCard({
         <span className={cn("text-2xl font-bold tabular-nums", colors.text)}>
           {current}
         </span>
-        <span className="text-zinc-600 text-sm">{unit}</span>
+        <span className="text-zinc-500 text-sm">{unit}</span>
       </div>
     </div>
   );
