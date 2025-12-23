@@ -14,8 +14,7 @@
     <meta name="application-name" content="RESET" />
     
     <!-- Theme Color - Matches app background -->
-    <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0F172A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0F172A" />
     
     <!-- Format Detection - Disable auto-formatting -->
     <meta name="format-detection" content="telephone=no" />
@@ -27,6 +26,9 @@
     <meta name="HandheldFriendly" content="true" />
     <meta name="MobileOptimized" content="width" />
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,7 +36,21 @@
     
     <!-- Favicon and App Icons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+    
+    <!-- Apple Splash Screens - iPhone/iPad -->
+    <!-- iPhone 14 Pro Max, 15 Pro Max -->
+    <link rel="apple-touch-startup-image" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 430 932'%3E%3Crect fill='%230F172A' width='430' height='932'/%3E%3Ctext x='215' y='500' text-anchor='middle' font-family='system-ui' font-size='80' font-weight='800' fill='%2322D3EE'%3ER%3C/text%3E%3C/svg%3E" 
+          media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)">
+    <!-- iPhone 14 Pro, 15 Pro -->
+    <link rel="apple-touch-startup-image" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 393 852'%3E%3Crect fill='%230F172A' width='393' height='852'/%3E%3Ctext x='196' y='460' text-anchor='middle' font-family='system-ui' font-size='80' font-weight='800' fill='%2322D3EE'%3ER%3C/text%3E%3C/svg%3E" 
+          media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)">
+    <!-- iPhone 14, 13, 12 -->
+    <link rel="apple-touch-startup-image" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'%3E%3Crect fill='%230F172A' width='390' height='844'/%3E%3Ctext x='195' y='456' text-anchor='middle' font-family='system-ui' font-size='80' font-weight='800' fill='%2322D3EE'%3ER%3C/text%3E%3C/svg%3E" 
+          media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)">
+    <!-- iPhone SE, 8, 7, 6s, 6 -->
+    <link rel="apple-touch-startup-image" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 375 667'%3E%3Crect fill='%230F172A' width='375' height='667'/%3E%3Ctext x='187' y='360' text-anchor='middle' font-family='system-ui' font-size='80' font-weight='800' fill='%2322D3EE'%3ER%3C/text%3E%3C/svg%3E" 
+          media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
     
     <!-- Title and SEO -->
     <title>RESET - Master Your Rhythm</title>
