@@ -40,7 +40,7 @@ const MobileHeader = ({
   return (
     <header 
       className={cn(
-        "sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50 safe-area-top",
+        "sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50 header-safe",
         className
       )}
       style={accentColor ? { 

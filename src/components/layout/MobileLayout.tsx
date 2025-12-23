@@ -17,7 +17,7 @@ const MobileLayout = ({
   accentColor = "primary"
 }: MobileLayoutProps) => {
   return (
-    <div className="min-h-screen bg-background relative overflow-x-hidden">
+    <div className="min-h-screen-safe bg-background relative overflow-x-hidden no-overscroll">
       {/* Animated Background Blobs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div 

@@ -15,7 +15,7 @@ export default function NutritionLayout({
 }: NutritionLayoutProps) {
   return (
     <div className={cn(
-      "min-h-screen nutrition-theme bg-zinc-950 text-zinc-100",
+      "min-h-screen-safe nutrition-theme bg-zinc-950 text-zinc-100 no-overscroll",
       className
     )}>
       {/* Tactical grid overlay */}

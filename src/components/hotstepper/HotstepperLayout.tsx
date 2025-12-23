@@ -21,7 +21,7 @@ export function HotstepperLayout({
 }: HotstepperLayoutProps) {
   return (
     <div className={cn(
-      'hotstepper-theme min-h-screen bg-[hsl(210,28%,10%)] text-[hsl(0,0%,95%)]',
+      'hotstepper-theme min-h-screen-safe bg-[hsl(210,28%,10%)] text-[hsl(0,0%,95%)] no-overscroll',
       className
     )}>
       {/* Background gradient */}
