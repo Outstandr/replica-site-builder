@@ -81,6 +81,11 @@ export default {
       },
       borderWidth: {
         '3': '3px',
+        '4': '4px',
+      },
+      ringWidth: {
+        '3': '3px',
+        '4': '4px',
       },
       keyframes: {
         "accordion-down": {
