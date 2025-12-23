@@ -14,6 +14,7 @@ import QuickAccessCard from '@/components/QuickAccessCard';
 import DailyFocus from '@/components/DailyFocus';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import HotStepperWidget from '@/components/dashboard/HotStepperWidget';
+import NutritionWidget from '@/components/dashboard/NutritionWidget';
 import SkeletonCard from '@/components/mobile/SkeletonCard';
 import { cn } from '@/lib/utils';
 import { 
@@ -141,14 +142,6 @@ const Dashboard = () => {
       featured: true
     },
     {
-      title: 'Ration Control',
-      description: 'AI-powered calorie tracker',
-      icon: UtensilsCrossed,
-      href: '/nutrition',
-      color: 'hsl(186, 100%, 50%)',
-      gradient: 'linear-gradient(135deg, hsl(186, 100%, 40%), hsl(200, 80%, 30%))'
-    },
-    {
       title: 'Masterclass Library',
       description: 'Expert-led video lessons',
       icon: Play,
@@ -206,6 +199,11 @@ const Dashboard = () => {
           {/* HotStepper Widget */}
           <section className="animate-fade-in-up animation-delay-100">
             <HotStepperWidget />
+          </section>
+
+          {/* Nutrition Widget */}
+          <section className="animate-fade-in-up animation-delay-150">
+            <NutritionWidget />
           </section>
 
           {/* Stats Grid */}
