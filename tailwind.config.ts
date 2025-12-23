@@ -66,11 +66,13 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Dynamic Theme Colors (RGB-based for alpha support)
-        themeBg: "rgb(var(--theme-bg) / <alpha-value>)",
-        themeText: "rgb(var(--theme-text) / <alpha-value>)",
-        themeAccent: "rgb(var(--theme-accent) / <alpha-value>)",
-        themeSecondary: "rgb(var(--theme-secondary) / <alpha-value>)",
+        // Dual-Universe Theme Colors (RGB-based for alpha support)
+        app: {
+          bg: "rgb(var(--bg-primary) / <alpha-value>)",
+          text: "rgb(var(--text-primary) / <alpha-value>)",
+          accent: "rgb(var(--accent-color) / <alpha-value>)",
+          secondary: "rgb(var(--secondary-color) / <alpha-value>)",
+        },
       },
       boxShadow: {
         'soft': 'var(--shadow-soft)',
@@ -83,6 +85,12 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        app: "var(--radius-heavy)",
+        btn: "var(--radius-light)",
+      },
+      fontFamily: {
+        heading: "var(--font-heading)",
+        body: "var(--font-body)",
       },
       borderWidth: {
         '3': '3px',

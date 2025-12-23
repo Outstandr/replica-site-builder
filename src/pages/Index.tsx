@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTranslations } from "@/hooks/useTranslations";
+import { GenderThemeToggle } from "@/components/GenderThemeToggle";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const Index = () => {
             <div className="hidden md:flex items-center gap-4">
               <Button variant="ghost" size="sm" onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}>{t.landing.about}</Button>
               <Button variant="ghost" size="sm" onClick={() => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' })}>{t.landing.testimonialsLink}</Button>
+              <GenderThemeToggle />
               <LanguageSwitcher />
               <Button variant="zen" size="sm" onClick={() => navigate('/dashboard')}>{t.auth.signIn}</Button>
               <Button variant="hero" size="sm" onClick={() => navigate('/dashboard')}>{t.auth.getStarted}<ArrowRight className="w-4 h-4 ml-2" /></Button>
@@ -42,7 +44,10 @@ const Index = () => {
             <div className="md:hidden mt-4 pb-4 space-y-2 animate-fade-in-up">
               <Button variant="ghost" className="w-full justify-start" onClick={() => { document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }}>{t.landing.about}</Button>
               <Button variant="ghost" className="w-full justify-start" onClick={() => { document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }}>{t.landing.testimonialsLink}</Button>
-              <div className="px-2 py-2"><LanguageSwitcher /></div>
+              <div className="px-2 py-2 flex items-center gap-2">
+                <GenderThemeToggle variant="compact" />
+                <LanguageSwitcher />
+              </div>
               <Button variant="zen" className="w-full" onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }}>{t.auth.signIn}</Button>
               <Button variant="hero" className="w-full" onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }}>{t.auth.getStarted}<ArrowRight className="w-4 h-4 ml-2" /></Button>
             </div>
