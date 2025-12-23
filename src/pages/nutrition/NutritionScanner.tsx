@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Camera, Keyboard, ImageIcon } from 'lucide-react';
+import { ArrowLeft, Camera, Keyboard, ImageIcon, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,7 +11,8 @@ import {
   NutritionRadarScan,
   NutritionReviewModal
 } from '@/components/nutrition';
-import { useNutritionAnalyzer, useNutritionLogs, AnalysisResult } from '@/hooks/nutrition';
+import { useNutritionAnalyzer, useNutritionLogs } from '@/hooks/nutrition';
+import { useCamera } from '@/hooks/useCamera';
 
 export default function NutritionScanner() {
   const navigate = useNavigate();
@@ -23,18 +24,18 @@ export default function NutritionScanner() {
 
   const { analyzing, result, error, analyzeImage, analyzeText, reset } = useNutritionAnalyzer();
   const { createLog } = useNutritionLogs();
+  const { isCapturing, capturePhoto, pickFromGallery, platform } = useCamera();
 
+  // Handle file input (web fallback)
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       toast.error('Please select an image file');
       return;
     }
 
-    // Convert to base64
     const reader = new FileReader();
     reader.onload = async (event) => {
       const base64 = event.target?.result as string;
@@ -47,6 +48,30 @@ export default function NutritionScanner() {
     };
     reader.readAsDataURL(file);
   }, [analyzeImage]);
+
+  // Handle native camera capture
+  const handleCameraCapture = useCallback(async () => {
+    const result = await capturePhoto();
+    if (result) {
+      setPreviewImage(result.base64);
+      const analysisResult = await analyzeImage(result.base64);
+      if (analysisResult) {
+        setShowReviewModal(true);
+      }
+    }
+  }, [capturePhoto, analyzeImage]);
+
+  // Handle gallery pick
+  const handleGalleryPick = useCallback(async () => {
+    const result = await pickFromGallery();
+    if (result) {
+      setPreviewImage(result.base64);
+      const analysisResult = await analyzeImage(result.base64);
+      if (analysisResult) {
+        setShowReviewModal(true);
+      }
+    }
+  }, [pickFromGallery, analyzeImage]);
 
   const handleTextSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -159,24 +184,37 @@ export default function NutritionScanner() {
               className="hidden"
             />
 
-            {/* Capture button */}
-            <Button
-              onClick={handleCaptureClick}
-              disabled={analyzing}
-              className="w-full h-14 bg-cyan-500 hover:bg-cyan-400 text-black font-bold uppercase tracking-wider text-lg"
-            >
-              {analyzing ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin mr-2" />
-                  Scanning...
-                </>
-              ) : (
-                <>
-                  <Camera className="w-5 h-5 mr-2" />
-                  Capture Target
-                </>
-              )}
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              {/* Camera button */}
+              <Button
+                onClick={handleCameraCapture}
+                disabled={analyzing || isCapturing}
+                className="flex-1 h-14 bg-cyan-500 hover:bg-cyan-400 text-black font-bold uppercase tracking-wider"
+              >
+                {analyzing || isCapturing ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin mr-2" />
+                    {analyzing ? 'Scanning...' : 'Capturing...'}
+                  </>
+                ) : (
+                  <>
+                    <Camera className="w-5 h-5 mr-2" />
+                    Camera
+                  </>
+                )}
+              </Button>
+
+              {/* Gallery button */}
+              <Button
+                onClick={handleGalleryPick}
+                disabled={analyzing || isCapturing}
+                variant="outline"
+                className="h-14 px-6 border-cyan-500/50 text-cyan-400 hover:bg-cyan-500/20"
+              >
+                <Image className="w-5 h-5" />
+              </Button>
+            </div>
 
             {error && (
               <div className="nutrition-card p-4 border-red-500/50 text-center">
