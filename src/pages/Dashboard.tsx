@@ -29,7 +29,8 @@ import {
   Library,
   PenLine,
   Footprints,
-  UtensilsCrossed
+  UtensilsCrossed,
+  ClipboardCheck
 } from 'lucide-react';
 
 interface UserProgress {
@@ -130,6 +131,15 @@ const Dashboard = () => {
   const journeyProgress = Math.round((completedSteps.length / 5) * 100);
 
   const quickAccessItems = [
+    {
+      title: 'Soul Assessments',
+      description: 'Audit your Rhythm, Energy, and Focus',
+      icon: ClipboardCheck,
+      href: '/garden/quizzes',
+      color: 'hsl(var(--primary))',
+      gradient: 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))',
+      featured: true
+    },
     {
       title: 'HotStepper',
       description: '10,000 steps challenge',

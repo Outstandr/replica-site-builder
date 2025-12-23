@@ -10,14 +10,6 @@ interface QuizCardProps {
   onStart: (quizId: string) => void;
 }
 
-const categoryColors: Record<string, string> = {
-  rhythm: "from-primary/20 to-accent/10",
-  energy: "from-accent/20 to-primary/10",
-  systems: "from-primary/30 to-secondary/20",
-  execution: "from-accent/30 to-primary/10",
-  transformation: "from-primary/20 to-accent/20",
-};
-
 const categoryIcons: Record<string, string> = {
   rhythm: "🎵",
   energy: "⚡",
@@ -40,18 +32,16 @@ export function QuizCard({ quiz, lastAttempt, onStart }: QuizCardProps) {
       transition={{ type: "spring", damping: 20 }}
       className={cn(
         "relative overflow-hidden rounded-2xl",
-        "backdrop-blur-md bg-card/40 border border-primary/20",
-        "hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10",
+        // Glass effect with theme-aware border colors
+        "backdrop-blur-md bg-card/40",
+        // Border uses primary color which adapts to theme
+        "border-2 border-primary/30",
+        "hover:border-primary/50 hover:shadow-xl hover:shadow-primary/10",
         "transition-all duration-300"
       )}
     >
-      {/* Gradient overlay */}
-      <div
-        className={cn(
-          "absolute inset-0 opacity-30 bg-gradient-to-br",
-          categoryColors[quiz.category || "rhythm"]
-        )}
-      />
+      {/* Gradient overlay - uses theme colors */}
+      <div className="absolute inset-0 opacity-20 bg-gradient-to-br from-primary/30 to-accent/20" />
 
       <div className="relative p-6">
         {/* Header with icon */}
