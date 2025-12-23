@@ -196,14 +196,12 @@ const Dashboard = () => {
             </div>
           </section>
 
-          {/* HotStepper Widget */}
+          {/* Widgets Row - Side by Side */}
           <section className="animate-fade-in-up animation-delay-100">
-            <HotStepperWidget />
-          </section>
-
-          {/* Nutrition Widget */}
-          <section className="animate-fade-in-up animation-delay-150">
-            <NutritionWidget />
+            <div className="flex gap-3">
+              <HotStepperWidget />
+              <NutritionWidget />
+            </div>
           </section>
 
           {/* Stats Grid */}
