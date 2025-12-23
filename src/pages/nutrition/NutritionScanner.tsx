@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Camera, Keyboard, ImageIcon, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,66 +12,64 @@ import {
   NutritionReviewModal
 } from '@/components/nutrition';
 import { useNutritionAnalyzer, useNutritionLogs } from '@/hooks/nutrition';
-import { useCamera } from '@/hooks/useCamera';
+import { CalorieCameraService } from '@/services/CalorieCameraService';
 
 export default function NutritionScanner() {
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [textQuery, setTextQuery] = useState('');
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [isLogging, setIsLogging] = useState(false);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   const { analyzing, result, error, analyzeImage, analyzeText, reset } = useNutritionAnalyzer();
   const { createLog } = useNutritionLogs();
-  const { isCapturing, capturePhoto, pickFromGallery, platform } = useCamera();
 
-  // Handle file input (web fallback)
-  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const base64 = event.target?.result as string;
-      setPreviewImage(base64);
-      
-      const analysisResult = await analyzeImage(base64);
-      if (analysisResult) {
-        setShowReviewModal(true);
-      }
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      CalorieCameraService.dispose();
     };
-    reader.readAsDataURL(file);
+  }, []);
+
+  // Handle native camera capture using crash-proof service
+  const handleCameraCapture = useCallback(async () => {
+    setIsCapturing(true);
+    try {
+      const captureResult = await CalorieCameraService.openScanner();
+      if (captureResult) {
+        // Add data URL prefix for preview display
+        const base64WithPrefix = `data:image/${captureResult.format};base64,${captureResult.base64}`;
+        setPreviewImage(base64WithPrefix);
+        
+        const analysisResult = await analyzeImage(captureResult.base64);
+        if (analysisResult) {
+          setShowReviewModal(true);
+        }
+      }
+    } finally {
+      setIsCapturing(false);
+    }
   }, [analyzeImage]);
 
-  // Handle native camera capture
-  const handleCameraCapture = useCallback(async () => {
-    const result = await capturePhoto();
-    if (result) {
-      setPreviewImage(result.base64);
-      const analysisResult = await analyzeImage(result.base64);
-      if (analysisResult) {
-        setShowReviewModal(true);
-      }
-    }
-  }, [capturePhoto, analyzeImage]);
-
-  // Handle gallery pick
+  // Handle gallery pick using crash-proof service
   const handleGalleryPick = useCallback(async () => {
-    const result = await pickFromGallery();
-    if (result) {
-      setPreviewImage(result.base64);
-      const analysisResult = await analyzeImage(result.base64);
-      if (analysisResult) {
-        setShowReviewModal(true);
+    setIsCapturing(true);
+    try {
+      const captureResult = await CalorieCameraService.openGallery();
+      if (captureResult) {
+        const base64WithPrefix = `data:image/${captureResult.format};base64,${captureResult.base64}`;
+        setPreviewImage(base64WithPrefix);
+        
+        const analysisResult = await analyzeImage(captureResult.base64);
+        if (analysisResult) {
+          setShowReviewModal(true);
+        }
       }
+    } finally {
+      setIsCapturing(false);
     }
-  }, [pickFromGallery, analyzeImage]);
+  }, [analyzeImage]);
 
   const handleTextSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,10 +111,6 @@ export default function NutritionScanner() {
       toast.error('Failed to log ration');
     }
   }, [createLog, navigate, reset]);
-
-  const handleCaptureClick = () => {
-    fileInputRef.current?.click();
-  };
 
   return (
     <NutritionLayout>
@@ -173,16 +167,6 @@ export default function NutritionScanner() {
                 </div>
               )}
             </NutritionScannerHUD>
-
-            {/* Hidden file input */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
 
             {/* Action Buttons */}
             <div className="flex gap-3">
