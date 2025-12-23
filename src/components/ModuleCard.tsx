@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Lock, CheckCircle, Play, ChevronRight } from "lucide-react";
+import { Lock, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -39,80 +39,55 @@ const ModuleCard = ({
   return (
     <div
       className={cn(
-        "relative group rounded-2xl p-6 transition-all duration-300",
-        "bg-card border-2 shadow-soft hover:shadow-medium",
+        "relative rounded-2xl p-[2px] transition-all duration-300",
         isLocked ? "opacity-60 cursor-not-allowed" : "hover-lift cursor-pointer",
-        isCompleted && "border-accent/50",
-        isInProgress && "border-primary/50",
-        !isLocked && !isCompleted && !isInProgress && "border-border hover:border-primary/30"
+        "bg-gradient-to-br from-cyan-400 via-cyan-300 to-cyan-400"
       )}
     >
-      {/* Status badge */}
-      <div className="absolute top-4 right-4">
-        {isLocked && (
-          <div className="p-2 rounded-full bg-muted">
-            <Lock className="w-4 h-4 text-muted-foreground" />
-          </div>
-        )}
-        {isCompleted && (
-          <div className="p-2 rounded-full bg-accent/20">
-            <CheckCircle className="w-4 h-4 text-accent" />
-          </div>
-        )}
-        {isInProgress && (
-          <div className="p-2 rounded-full bg-primary/20">
-            <Play className="w-4 h-4 text-primary" />
-          </div>
-        )}
-      </div>
-
-      {/* Icon */}
-      <div
-        className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110"
-        style={{ backgroundColor: `${color}20`, color }}
-      >
-        {icon}
-      </div>
-
-      {/* Content */}
-      <h3 className="text-lg font-bold text-foreground mb-1">{title}</h3>
-      <p className="text-sm text-muted-foreground mb-2">{subtitle}</p>
-      <p className="text-sm text-muted-foreground/80 mb-4 line-clamp-2">{description}</p>
-
-      {/* Progress bar */}
-      {!isLocked && (
-        <div className="mb-4">
-          <div className="flex justify-between text-xs text-muted-foreground mb-1">
-            <span>{completedLessons}/{lessons} lessons</span>
-            <span>{progress}%</span>
-          </div>
-          <div className="h-2 rounded-full bg-muted overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${progress}%`, backgroundColor: color }}
-            />
-          </div>
+      <div className="relative rounded-[14px] bg-card p-6 h-full">
+        {/* Icon */}
+        <div
+          className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+          style={{ backgroundColor: `${color}20`, color }}
+        >
+          {icon}
         </div>
-      )}
 
-      {/* Action button */}
-      {!isLocked ? (
-        <Link to={linkTo}>
+        {/* Content */}
+        <h3 className="text-xl font-bold text-foreground mb-1">{title}</h3>
+        <p 
+          className="text-sm font-semibold mb-3"
+          style={{ color }}
+        >
+          {subtitle}
+        </p>
+        <p className="text-sm text-muted-foreground mb-6 leading-relaxed">{description}</p>
+
+        {/* Action button */}
+        {!isLocked ? (
+          <Link to={linkTo} className="block">
+            <Button 
+              className={cn(
+                "w-full h-12 rounded-full font-semibold text-white",
+                "bg-gradient-to-r from-primary via-purple-500 to-primary",
+                "hover:opacity-90 transition-opacity",
+                "flex items-center justify-center gap-2"
+              )}
+            >
+              <span>{isCompleted ? 'Review Journey' : isInProgress ? 'Continue Journey' : 'Start Journey'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+        ) : (
           <Button 
-            variant="ghost" 
-            className="w-full justify-between group-hover:bg-primary/10"
-            style={{ color }}
+            disabled 
+            className="w-full h-12 rounded-full font-semibold bg-muted text-muted-foreground flex items-center justify-center gap-2"
           >
-            <span>{isCompleted ? 'Review' : isInProgress ? 'Continue' : 'Start'}</span>
-            <ChevronRight className="w-4 h-4" />
+            <Lock className="w-4 h-4" />
+            <span>Locked</span>
           </Button>
-        </Link>
-      ) : (
-        <Button variant="ghost" disabled className="w-full justify-between opacity-50">
-          <span>Locked</span>
-          <Lock className="w-4 h-4" />
-        </Button>
-      )}
+        )}
+      </div>
     </div>
   );
 };
