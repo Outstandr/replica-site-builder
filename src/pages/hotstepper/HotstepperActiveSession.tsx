@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Square, Footprints, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Square, Footprints } from 'lucide-react';
 import { HotstepperLayout } from '@/components/hotstepper/HotstepperLayout';
-import { HotstepperMapPlaceholder } from '@/components/hotstepper/HotstepperMapPlaceholder';
+import HotstepperMap from '@/components/hotstepper/HotstepperMap';
 import { HotstepperSessionStats } from '@/components/hotstepper/HotstepperSessionStats';
 import { useHotstepperSession, useHotstepperLocation, useHotstepperHealth } from '@/hooks/hotstepper';
 import { Button } from '@/components/ui/button';
-import { useEffect } from 'react';
 
 export default function HotstepperActiveSession() {
   const navigate = useNavigate();
@@ -74,11 +73,14 @@ export default function HotstepperActiveSession() {
 
       {/* Map Area */}
       <div className="px-4 mb-4">
-        <HotstepperMapPlaceholder
-          gpsStatus={location.gpsStatus}
-          error={location.error}
-          onRetry={location.retryGPS}
-          onUseStepsOnly={handleUseStepsOnly}
+        <HotstepperMap
+          routePoints={location.routePoints}
+          currentPosition={location.currentPosition ? {
+            lat: location.currentPosition.latitude,
+            lng: location.currentPosition.longitude
+          } : null}
+          isTracking={location.isTracking}
+          className="h-64 rounded-xl"
         />
       </div>
 
