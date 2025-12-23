@@ -13,7 +13,7 @@ import JourneyCircle from '@/components/JourneyCircle';
 import QuickAccessCard from '@/components/QuickAccessCard';
 import DailyFocus from '@/components/DailyFocus';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { GenderThemeToggle } from '@/components/GenderThemeToggle';
+
 import SkeletonCard from '@/components/mobile/SkeletonCard';
 import { cn } from '@/lib/utils';
 import { 
@@ -187,12 +187,7 @@ const Dashboard = () => {
       <MobileHeader 
         title="RESET"
         showLogo
-        rightContent={
-          <div className="flex items-center gap-2">
-            <GenderThemeToggle variant="compact" />
-            <LanguageSwitcher />
-          </div>
-        }
+        rightContent={<LanguageSwitcher />}
       />
 
       <PageTransition>

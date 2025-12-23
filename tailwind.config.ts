@@ -66,13 +66,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        // Dual-Universe Theme Colors (RGB-based for alpha support)
-        app: {
-          bg: "rgb(var(--bg-primary) / <alpha-value>)",
-          text: "rgb(var(--text-primary) / <alpha-value>)",
-          accent: "rgb(var(--accent-color) / <alpha-value>)",
-          secondary: "rgb(var(--secondary-color) / <alpha-value>)",
-        },
       },
       boxShadow: {
         'soft': 'var(--shadow-soft)',
@@ -85,20 +78,9 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-        app: "var(--radius-heavy)",
-        btn: "var(--radius-light)",
       },
       fontFamily: {
-        heading: "var(--font-heading)",
-        body: "var(--font-body)",
-      },
-      borderWidth: {
-        '3': '3px',
-        '4': '4px',
-      },
-      ringWidth: {
-        '3': '3px',
-        '4': '4px',
+        sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       keyframes: {
         "accordion-down": {
