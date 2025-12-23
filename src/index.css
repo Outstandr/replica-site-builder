@@ -7,169 +7,211 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  /* ==========================================
+     THEME A: FEMALE (Nature / Warm / Soft)
+     ========================================== */
   :root {
-    /* Light Grey Palette with High Contrast */
-    --background: 0 0% 96%;  /* Light grey background */
-    --foreground: 222 47% 11%;  /* Dark text for readability */
+    /* Base Backgrounds - Warm Cream */
+    --background: 40 20% 97%;    /* #FAF9F6 */
+    --foreground: 24 10% 10%;    /* Warm Black */
 
-    --card: 207 90% 98%;  /* Subtle blue tint for cards */
-    --card-foreground: 222 47% 11%;
+    /* Cards - Soft Warm White */
+    --card: 40 20% 95%;
+    --card-foreground: 24 10% 10%;
 
-    --popover: 269 60% 98%;  /* Subtle purple tint */
-    --popover-foreground: 222 47% 11%;
+    /* Popovers */
+    --popover: 40 20% 97%;
+    --popover-foreground: 24 10% 10%;
 
-    /* Primary: Vibrant Blue - Stands out on light bg */
-    --primary: 207 90% 54%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary Brand Color - Terracotta/Clay */
+    --primary: 16 35% 66%;       /* #CCA595 */
+    --primary-foreground: 60 9% 98%;
 
-    /* Secondary: Vibrant Purple - Wisdom & Growth */
-    --secondary: 269 80% 55%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary - Soft Beige */
+    --secondary: 30 15% 90%;
+    --secondary-foreground: 24 10% 10%;
 
-    /* Muted: Light grey with subtle tint */
-    --muted: 210 30% 92%;
-    --muted-foreground: 215 16% 40%;
+    /* Muted Text */
+    --muted: 30 10% 92%;
+    --muted-foreground: 24 5% 40%;
 
-    /* Accent: Bright Green - Balance & Health */
-    --accent: 143 64% 45%;
-    --accent-foreground: 0 0% 100%;
+    /* Accents */
+    --accent: 30 15% 90%;
+    --accent-foreground: 24 10% 10%;
 
     /* Destructive */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 80%;
-    --input: 214 32% 88%;
-    --ring: 207 90% 54%;
+    /* Borders - Warm Grey */
+    --border: 30 10% 85%;
+    --input: 30 10% 85%;
+    --ring: 16 35% 66%;
 
-    --radius: 1rem;
+    /* Border Radius - Rounded/Soft */
+    --radius: 1.0rem;
 
-    /* RESET Journey Colors - Vibrant & Distinct */
-    --reset-rhythm: 143 70% 42%;  /* Vibrant forest green - Physical */
-    --reset-energy: 207 85% 48%;  /* Deep vibrant blue - Energy */
-    --reset-systems: 269 75% 55%;  /* Rich purple - Mental/Spiritual */
-    --reset-execution: 190 80% 45%;  /* Teal/cyan - Action */
-    --reset-transformation: 280 70% 52%;  /* Bright violet - Growth */
+    /* RESET Journey Colors - Warm Tones */
+    --reset-rhythm: 143 50% 45%;
+    --reset-energy: 16 35% 55%;
+    --reset-systems: 30 40% 50%;
+    --reset-execution: 20 50% 55%;
+    --reset-transformation: 340 45% 55%;
 
-    /* Premium Accents - Vibrant */
+    /* Premium Accents */
     --gold: 45 90% 55%;
     --cinnabar: 0 85% 58%;
     --electric-purple: 269 80% 58%;
     --neon-cyan: 190 75% 50%;
 
-    /* Professional Gradients - Light Theme */
+    /* Professional Gradients */
     --gradient-hero: linear-gradient(135deg,
-      hsl(0 0% 98%) 0%,
-      hsl(207 90% 96%) 50%,
-      hsl(0 0% 98%) 100%);
+      hsl(40 20% 98%) 0%,
+      hsl(30 20% 96%) 50%,
+      hsl(40 20% 98%) 100%);
 
     --gradient-card: linear-gradient(135deg,
-      hsl(0 0% 100%) 0%,
-      hsl(210 40% 98%) 100%);
+      hsl(40 20% 97%) 0%,
+      hsl(30 15% 95%) 100%);
 
     --gradient-journey: linear-gradient(90deg,
-      hsl(143 64% 42%) 0%,
-      hsl(207 90% 54%) 33%,
-      hsl(269 80% 55%) 66%,
-      hsl(210 40% 50%) 100%);
+      hsl(143 50% 45%) 0%,
+      hsl(16 35% 55%) 33%,
+      hsl(30 40% 50%) 66%,
+      hsl(340 45% 55%) 100%);
 
-    --gradient-dark-blue: linear-gradient(135deg,
-      hsl(207 90% 96%),
-      hsl(207 90% 98%),
-      hsl(207 90% 54% / 0.1));
+    /* Refined Shadows - Warm Theme */
+    --shadow-soft: 0 2px 12px hsl(30 10% 0% / 0.08);
+    --shadow-medium: 0 8px 32px hsl(30 10% 0% / 0.12);
+    --shadow-strong: 0 16px 48px hsl(30 10% 0% / 0.16);
+    --shadow-glow: 0 0 40px hsl(16 35% 66% / 0.3);
+    --shadow-neon: 0 0 60px hsl(16 35% 66% / 0.4);
 
-    /* Refined Shadows - Light Theme */
-    --shadow-soft: 0 2px 12px hsl(0 0% 0% / 0.08);
-    --shadow-medium: 0 8px 32px hsl(0 0% 0% / 0.12);
-    --shadow-strong: 0 16px 48px hsl(0 0% 0% / 0.16);
-    --shadow-glow: 0 0 40px hsl(207 90% 54% / 0.3);
-    --shadow-neon: 0 0 60px hsl(269 80% 55% / 0.4);
-
-    /* Transitions - Bouncy & Playful */
+    /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-spring: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar */
+    --sidebar-background: 40 20% 97%;
+    --sidebar-foreground: 24 10% 10%;
+    --sidebar-primary: 16 35% 66%;
+    --sidebar-primary-foreground: 60 9% 98%;
+    --sidebar-accent: 30 15% 90%;
+    --sidebar-accent-foreground: 24 10% 10%;
+    --sidebar-border: 30 10% 85%;
+    --sidebar-ring: 16 35% 66%;
 
-    /* ====== DUAL-UNIVERSE THEME ENGINE ====== */
-    /* Default: Female Theme - Nurturing, Organic, Soft */
-    --bg-primary: 250 249 246;     /* Warm Cream #FAF9F6 */
-    --text-primary: 60 50 40;      /* Warm Brown/Grey */
-    --accent-color: 204 165 149;   /* Terracotta #CCA595 */
+    /* Dual-Universe Engine Variables */
+    --bg-primary: 250 249 246;
+    --text-primary: 60 50 40;
+    --accent-color: 204 165 149;
     --secondary-color: 231 229 228;
-    --radius-heavy: 24px;          /* Soft Cards */
-    --radius-light: 9999px;        /* Pill Buttons */
+    --radius-heavy: 24px;
+    --radius-light: 9999px;
     --font-heading: 'Playfair Display', serif;
     --font-body: 'Lato', sans-serif;
   }
 
-  /* Male Theme Override - Disciplined, Stoic, Sharp */
+  /* ==========================================
+     THEME B: MALE (Tactical / Cool / Sharp)
+     ========================================== */
   [data-theme='male'] {
-    --bg-primary: 15 23 42;        /* Dark Slate #0F172A */
-    --text-primary: 226 232 240;   /* Cool White */
-    --accent-color: 6 182 212;     /* Electric Cyan #06B6D4 */
-    --secondary-color: 51 65 85;
-    --radius-heavy: 0px;           /* Sharp Cards */
-    --radius-light: 2px;           /* Tactical Buttons */
-    --font-heading: 'JetBrains Mono', monospace;
-    --font-body: 'Inter', sans-serif;
-  }
+    /* Base Backgrounds - Deep Slate/Navy */
+    --background: 222 47% 11%;   /* #0F172A */
+    --foreground: 210 40% 98%;   /* White */
 
-  .dark {
-    --background: 210 28% 12%;
-    --foreground: 0 0% 95%;
+    /* Cards - Slightly Lighter Navy */
+    --card: 222 47% 14%;
+    --card-foreground: 210 40% 98%;
 
-    --card: 210 28% 15%;
-    --card-foreground: 0 0% 95%;
+    /* Popovers */
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
 
-    --popover: 210 28% 15%;
-    --popover-foreground: 0 0% 95%;
+    /* Primary Brand Color - Electric Cyan */
+    --primary: 186 100% 42%;     /* #06B6D4 */
+    --primary-foreground: 222 47% 11%;
 
-    --primary: 207 25% 45%;
-    --primary-foreground: 0 0% 100%;
+    /* Secondary - Cool Grey */
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
 
-    --secondary: 269 25% 55%;
-    --secondary-foreground: 0 0% 100%;
+    /* Muted Text */
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
 
-    --muted: 210 25% 22%;
-    --muted-foreground: 215 15% 70%;
+    /* Accents */
+    --accent: 217 32% 20%;
+    --accent-foreground: 210 40% 98%;
 
-    --accent: 143 26% 45%;
-    --accent-foreground: 0 0% 100%;
-
+    /* Destructive */
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 25% 28%;
-    --input: 210 25% 28%;
-    --ring: 207 25% 45%;
+    /* Borders - Dark Slate */
+    --border: 217 32% 22%;
+    --input: 217 32% 22%;
+    --ring: 186 100% 42%;
 
-    /* Dark mode journey colors */
-    --reset-rhythm: 143 26% 48%;
-    --reset-energy: 207 25% 45%;
-    --reset-systems: 269 25% 55%;
-    --reset-execution: 210 28% 40%;
-    --reset-transformation: 269 30% 58%;
+    /* Border Radius - Sharp/Tactical */
+    --radius: 0.125rem;
 
+    /* RESET Journey Colors - Tactical Tones */
+    --reset-rhythm: 186 80% 40%;
+    --reset-energy: 200 90% 45%;
+    --reset-systems: 220 70% 50%;
+    --reset-execution: 186 100% 42%;
+    --reset-transformation: 270 60% 55%;
+
+    /* Premium Accents - Cool */
     --gold: 45 80% 55%;
     --cinnabar: 0 70% 55%;
+    --electric-purple: 270 70% 55%;
+    --neon-cyan: 186 100% 50%;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Professional Gradients - Dark Theme */
+    --gradient-hero: linear-gradient(135deg,
+      hsl(222 47% 11%) 0%,
+      hsl(217 32% 15%) 50%,
+      hsl(222 47% 11%) 100%);
+
+    --gradient-card: linear-gradient(135deg,
+      hsl(222 47% 14%) 0%,
+      hsl(217 32% 17%) 100%);
+
+    --gradient-journey: linear-gradient(90deg,
+      hsl(186 80% 40%) 0%,
+      hsl(200 90% 45%) 33%,
+      hsl(220 70% 50%) 66%,
+      hsl(270 60% 55%) 100%);
+
+    /* Refined Shadows - Dark Theme */
+    --shadow-soft: 0 2px 12px hsl(0 0% 0% / 0.4);
+    --shadow-medium: 0 8px 32px hsl(0 0% 0% / 0.5);
+    --shadow-strong: 0 16px 48px hsl(0 0% 0% / 0.6);
+    --shadow-glow: 0 0 40px hsl(186 100% 42% / 0.4);
+    --shadow-neon: 0 0 60px hsl(186 100% 50% / 0.5);
+
+    /* Sidebar - Dark */
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 186 100% 42%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 217 32% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 22%;
+    --sidebar-ring: 186 100% 42%;
+
+    /* Dual-Universe Engine Variables */
+    --bg-primary: 15 23 42;
+    --text-primary: 226 232 240;
+    --accent-color: 6 182 212;
+    --secondary-color: 51 65 85;
+    --radius-heavy: 0px;
+    --radius-light: 2px;
+    --font-heading: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', sans-serif;
   }
 }
 
@@ -179,9 +221,7 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply transition-all duration-500 ease-in-out;
-    background-color: rgb(var(--bg-primary));
-    color: rgb(var(--text-primary));
+    @apply bg-background text-foreground transition-all duration-500 ease-in-out;
     font-family: var(--font-body);
     font-feature-settings: "kern" 1, "liga" 1;
     -webkit-font-smoothing: antialiased;
