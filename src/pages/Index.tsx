@@ -1,138 +1,166 @@
-import { Hero } from "@/components/Hero";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, BookOpen, Users, Video, Menu, X, Leaf, Zap, Heart, Mountain, Flower } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useTranslations } from "@/hooks/useTranslations";
-import { GenderThemeToggle } from "@/components/GenderThemeToggle";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Feather } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/ThemeContext";
+
+const cyclingWords = ["SOUL", "MIND", "BODY", "LIMITS"];
 
 const Index = () => {
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const t = useTranslations();
+  const { theme, toggleTheme } = useTheme();
+  const [wordIndex, setWordIndex] = useState(0);
 
-  const resetSteps = [
-    { letter: "R", title: t.landing.resetOverview.rhythm.title, subtitle: t.landing.resetOverview.rhythm.subtitle, description: t.landing.resetOverview.rhythm.description, icon: Leaf, color: "reset-rhythm", symbolism: t.landing.resetOverview.rhythm.symbolism },
-    { letter: "E", title: t.landing.resetOverview.energy.title, subtitle: t.landing.resetOverview.energy.subtitle, description: t.landing.resetOverview.energy.description, icon: Zap, color: "reset-energy", symbolism: t.landing.resetOverview.energy.symbolism },
-    { letter: "S", title: t.landing.resetOverview.systems.title, subtitle: t.landing.resetOverview.systems.subtitle, description: t.landing.resetOverview.systems.description, icon: Heart, color: "reset-systems", symbolism: t.landing.resetOverview.systems.symbolism },
-    { letter: "E", title: t.landing.resetOverview.execution.title, subtitle: t.landing.resetOverview.execution.subtitle, description: t.landing.resetOverview.execution.description, icon: Mountain, color: "reset-execution", symbolism: t.landing.resetOverview.execution.symbolism },
-    { letter: "T", title: t.landing.resetOverview.transformation.title, subtitle: t.landing.resetOverview.transformation.subtitle, description: t.landing.resetOverview.transformation.description, icon: Flower, color: "reset-transformation", symbolism: t.landing.resetOverview.transformation.symbolism },
-  ];
+  // Cycle through words every 2.5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWordIndex((prev) => (prev + 1) % cyclingWords.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const isFemale = theme === "female";
 
   return (
-    <div className="min-h-screen">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-sm border-b border-border">
-        <div className="zen-container py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl md:text-2xl font-bold gradient-text">RESET Blueprint®️</h1>
-            <div className="hidden md:flex items-center gap-4">
-              <Button variant="ghost" size="sm" onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}>{t.landing.about}</Button>
-              <Button variant="ghost" size="sm" onClick={() => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' })}>{t.landing.testimonialsLink}</Button>
-              <GenderThemeToggle />
-              <LanguageSwitcher />
-              <Button variant="zen" size="sm" onClick={() => navigate('/dashboard')}>{t.auth.signIn}</Button>
-              <Button variant="hero" size="sm" onClick={() => navigate('/dashboard')}>{t.auth.getStarted}<ArrowRight className="w-4 h-4 ml-2" /></Button>
+    <div className="min-h-screen h-screen flex flex-col bg-background transition-all duration-500 overflow-hidden relative">
+      {/* Hero Section - Centered */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 relative z-10">
+        {/* Headline Stack */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="text-center space-y-2 mb-8"
+        >
+          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-black text-foreground tracking-tight">
+            RESET YOUR
+          </h1>
+          <div className="h-16 sm:h-20 md:h-24 flex items-center justify-center overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={cyclingWords[wordIndex]}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="font-heading text-5xl sm:text-6xl md:text-7xl font-black text-primary neon-text"
+              >
+                {cyclingWords[wordIndex]}
+              </motion.span>
+            </AnimatePresence>
+          </div>
+        </motion.div>
+
+        {/* Sub-headline */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="font-body text-lg sm:text-xl text-muted-foreground text-center max-w-xs mb-12"
+        >
+          The complete operating system for your life.
+        </motion.p>
+
+        {/* Vibe Switcher */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="flex flex-col items-center gap-4"
+        >
+          <span className="font-body text-sm text-muted-foreground uppercase tracking-widest">
+            Choose Your Frequency
+          </span>
+          
+          {/* Toggle Switch */}
+          <button
+            onClick={toggleTheme}
+            className="relative w-64 h-16 rounded-full bg-secondary/50 border-2 border-border p-1 transition-all duration-500 hover:border-primary/50 group"
+            aria-label="Toggle theme"
+          >
+            {/* Track Labels */}
+            <div className="absolute inset-0 flex items-center justify-between px-6 pointer-events-none">
+              <span className={`font-body font-semibold text-sm transition-all duration-500 ${isFemale ? 'text-primary' : 'text-muted-foreground'}`}>
+                Warm
+              </span>
+              <span className={`font-body font-semibold text-sm transition-all duration-500 ${!isFemale ? 'text-primary' : 'text-muted-foreground'}`}>
+                Cool
+              </span>
             </div>
-            <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            
+            {/* Thumb */}
+            <motion.div
+              layout
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              className={`absolute top-1 h-12 w-28 rounded-full bg-primary shadow-glow flex items-center justify-center
+                ${isFemale ? 'left-1' : 'left-[calc(100%-7.25rem)]'}`}
+            >
+              <span className="font-body font-bold text-sm text-primary-foreground">
+                {isFemale ? '☀️ Warm' : '❄️ Cool'}
+              </span>
+            </motion.div>
+          </button>
+        </motion.div>
+      </main>
+
+      {/* Authority Badge */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.7 }}
+        className="absolute bottom-36 left-1/2 -translate-x-1/2 z-10"
+      >
+        <div className="glass-effect px-4 py-2 rounded-full flex items-center gap-2">
+          <Feather className="w-4 h-4 text-muted-foreground" />
+          <span className="font-body text-xs text-muted-foreground">
+            Methodology by Lionel Eersteling
+          </span>
+        </div>
+      </motion.div>
+
+      {/* Thumb Zone Actions - Sticky Bottom */}
+      <motion.div
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.9 }}
+        className="fixed bottom-0 left-0 right-0 z-20"
+      >
+        {/* Gradient Fade */}
+        <div className="h-12 bg-gradient-to-t from-background to-transparent" />
+        
+        {/* Action Buttons */}
+        <div className="bg-background px-6 pb-8 pt-2 space-y-3 safe-area-bottom">
+          {/* Primary CTA with Pulse */}
+          <motion.div
+            animate={{ 
+              boxShadow: [
+                "0 0 0 0 hsl(var(--primary) / 0)",
+                "0 0 0 8px hsl(var(--primary) / 0.2)",
+                "0 0 0 0 hsl(var(--primary) / 0)"
+              ]
+            }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            className="rounded-lg"
+          >
+            <Button
+              onClick={() => navigate('/auth')}
+              className="w-full h-14 text-lg font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300"
+            >
+              Start Your Reset
             </Button>
-          </div>
-          {mobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 space-y-2 animate-fade-in-up">
-              <Button variant="ghost" className="w-full justify-start" onClick={() => { document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }}>{t.landing.about}</Button>
-              <Button variant="ghost" className="w-full justify-start" onClick={() => { document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' }); setMobileMenuOpen(false); }}>{t.landing.testimonialsLink}</Button>
-              <div className="px-2 py-2 flex items-center gap-2">
-                <GenderThemeToggle variant="compact" />
-                <LanguageSwitcher />
-              </div>
-              <Button variant="zen" className="w-full" onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }}>{t.auth.signIn}</Button>
-              <Button variant="hero" className="w-full" onClick={() => { navigate('/dashboard'); setMobileMenuOpen(false); }}>{t.auth.getStarted}<ArrowRight className="w-4 h-4 ml-2" /></Button>
-            </div>
-          )}
+          </motion.div>
+          
+          {/* Secondary - Login */}
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/auth')}
+            className="w-full h-12 text-muted-foreground hover:text-foreground transition-all duration-300"
+          >
+            Login
+          </Button>
         </div>
-      </nav>
-
-      <Hero />
-
-      {/* RESET Overview */}
-      <section id="about" className="py-24 bg-gradient-to-b from-muted via-background to-muted relative overflow-hidden">
-        <div className="zen-container relative z-10">
-          <div className="text-center mb-20 space-y-6 animate-fade-in-up">
-            <h2 className="text-5xl md:text-7xl font-black">
-              {t.landing.resetOverview.title.split('RESET')[0]}<span className="gradient-text neon-text">RESET</span>{t.landing.resetOverview.title.split('RESET')[1]}
-            </h2>
-            <p className="text-2xl text-foreground/80 font-bold max-w-2xl mx-auto">{t.landing.resetOverview.subtitle}<br/>{t.landing.resetOverview.subtitleDesc}</p>
-          </div>
-          <div className="grid grid-cols-2 gap-3 md:gap-6 lg:grid-cols-3 lg:gap-8 max-w-6xl mx-auto">
-            {resetSteps.map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <div key={index} className="group relative animate-bounce-in hover-lift" style={{ animationDelay: `${index * 150}ms` }}>
-                  <div className="h-full p-3 md:p-6 lg:p-8 rounded-2xl md:rounded-3xl bg-gradient-to-br from-card to-card/50 border-2 md:border-3 hover:border-4 transition-all duration-300 shadow-medium hover:shadow-strong relative overflow-hidden" style={{ borderColor: `hsl(var(--${step.color}))`, boxShadow: `0 8px 32px hsl(var(--${step.color}) / 0.15)` }}>
-                    <div className="relative w-10 h-10 md:w-16 md:h-16 lg:w-20 lg:h-20 rounded-xl md:rounded-2xl flex items-center justify-center mb-3 md:mb-4 lg:mb-6 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12 shadow-lg animate-scale-pulse" style={{ backgroundColor: `hsl(var(--${step.color}) / 0.2)`, boxShadow: `0 4px 20px hsl(var(--${step.color}) / 0.3)` }}>
-                      <Icon className="w-5 h-5 md:w-8 md:h-8 lg:w-10 lg:h-10" style={{ color: `hsl(var(--${step.color}))` }} />
-                    </div>
-                    <div className="absolute top-3 right-3 md:top-6 md:right-6 w-8 h-8 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full flex items-center justify-center font-black text-sm md:text-xl lg:text-2xl border-2 md:border-3 shadow-glow animate-scale-pulse" style={{ backgroundColor: `hsl(var(--${step.color}))`, borderColor: `hsl(var(--${step.color}))`, color: `hsl(var(--card))`, boxShadow: `0 0 20px hsl(var(--${step.color}) / 0.5)` }}>{step.letter}</div>
-                    <h3 className="relative text-lg md:text-2xl lg:text-3xl font-black mb-1 md:mb-2">{step.title}</h3>
-                    <p className="relative text-xs md:text-sm lg:text-base font-bold mb-2 md:mb-4" style={{ color: `hsl(var(--${step.color}))` }}>{step.subtitle}</p>
-                    <p className="relative text-xs md:text-sm lg:text-base text-foreground/70 font-medium mb-2 md:mb-4 leading-relaxed hidden md:block">{step.description}</p>
-                    <div className="relative pt-2 md:pt-4 border-t-2 hidden md:block" style={{ borderColor: `hsl(var(--${step.color}) / 0.3)` }}><p className="text-xs md:text-sm text-foreground/60 font-semibold">{step.symbolism}</p></div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-24 bg-muted/30">
-        <div className="zen-container">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">{t.landing.features.title}</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{t.landing.features.subtitle}</p>
-          </div>
-          <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
-            <Card className="border-0 shadow-medium hover:shadow-strong transition-shadow"><CardContent className="pt-8 text-center space-y-4"><div className="w-16 h-16 mx-auto rounded-xl bg-reset-rhythm/10 flex items-center justify-center"><Video className="w-8 h-8 text-reset-rhythm" /></div><h3 className="text-xl font-bold">{t.landing.features.masterclasses.title}</h3><p className="text-muted-foreground">{t.landing.features.masterclasses.description}</p></CardContent></Card>
-            <Card className="border-0 shadow-medium hover:shadow-strong transition-shadow"><CardContent className="pt-8 text-center space-y-4"><div className="w-16 h-16 mx-auto rounded-xl bg-reset-energy/10 flex items-center justify-center"><BookOpen className="w-8 h-8 text-reset-energy" /></div><h3 className="text-xl font-bold">{t.landing.features.ereader.title}</h3><p className="text-muted-foreground">{t.landing.features.ereader.description}</p></CardContent></Card>
-            <Card className="border-0 shadow-medium hover:shadow-strong transition-shadow"><CardContent className="pt-8 text-center space-y-4"><div className="w-16 h-16 mx-auto rounded-xl bg-reset-systems/10 flex items-center justify-center"><Users className="w-8 h-8 text-reset-systems" /></div><h3 className="text-xl font-bold">{t.landing.features.community.title}</h3><p className="text-muted-foreground">{t.landing.features.community.description}</p></CardContent></Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section id="testimonials" className="py-24 bg-gradient-to-br from-primary/5 via-reset-energy/5 to-reset-transformation/5">
-        <div className="zen-container">
-          <div className="text-center mb-16"><h2 className="text-4xl font-bold mb-4">{t.landing.testimonials.title}</h2><p className="text-xl text-muted-foreground">{t.landing.testimonials.subtitle}</p></div>
-          <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
-            <Card className="border-0 shadow-medium"><CardContent className="pt-8 space-y-4"><p className="text-muted-foreground italic">"{t.landing.testimonials.quote1}"</p><p className="font-semibold">- {t.landing.testimonials.author1}</p></CardContent></Card>
-            <Card className="border-0 shadow-medium"><CardContent className="pt-8 space-y-4"><p className="text-muted-foreground italic">"{t.landing.testimonials.quote2}"</p><p className="font-semibold">- {t.landing.testimonials.author2}</p></CardContent></Card>
-            <Card className="border-0 shadow-medium"><CardContent className="pt-8 space-y-4"><p className="text-muted-foreground italic">"{t.landing.testimonials.quote3}"</p><p className="font-semibold">- {t.landing.testimonials.author3}</p></CardContent></Card>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-24 bg-muted/30">
-        <div className="zen-container text-center">
-          <div className="max-w-3xl mx-auto space-y-8">
-            <h2 className="text-4xl md:text-5xl font-bold">{t.landing.cta.title}</h2>
-            <p className="text-xl text-muted-foreground">{t.landing.cta.subtitle}</p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="journey" size="lg" className="text-lg px-8" onClick={() => navigate('/dashboard')}>{t.landing.cta.button}<ArrowRight className="w-5 h-5 ml-2" /></Button>
-              <Button variant="outline" size="lg" className="text-lg px-8">{t.landing.cta.downloadGuide}</Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-card py-12">
-        <div className="zen-container"><div className="text-center text-muted-foreground"><p className="mb-2">© 2025 {t.landing.footer.title}. {t.landing.footer.copyright}</p><p className="text-sm">{t.landing.footer.description}</p></div></div>
-      </footer>
+      </motion.div>
     </div>
   );
 };
