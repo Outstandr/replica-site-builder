@@ -31,7 +31,7 @@ export default function HotstepperDashboard() {
       <header className="header-safe px-4 pb-4">
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={() => navigate('/modules')}
+            onClick={() => navigate('/dashboard')}
             className="p-2 rounded-lg hover:bg-[hsl(210,25%,20%)] press-scale"
           >
             <ArrowLeft className="w-5 h-5" />

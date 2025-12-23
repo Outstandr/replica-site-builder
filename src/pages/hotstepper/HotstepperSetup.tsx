@@ -97,7 +97,7 @@ export default function HotstepperSetup() {
     
     // Navigate to dashboard after brief delay
     setTimeout(() => {
-      navigate('/hotstepper');
+      navigate('/dashboard');
     }, 1500);
   };
 
@@ -143,7 +143,7 @@ export default function HotstepperSetup() {
   }
 
   return (
-    <HotstepperLayout showBackButton onBack={() => navigate('/modules')}>
+    <HotstepperLayout showBackButton onBack={() => navigate('/dashboard')}>
       <div className="flex flex-col min-h-[80vh] px-6 py-8">
         {/* Progress indicator */}
         <div className="flex items-center justify-center gap-2 mb-12">

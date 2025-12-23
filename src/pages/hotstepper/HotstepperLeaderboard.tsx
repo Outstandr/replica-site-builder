@@ -29,7 +29,7 @@ export default function HotstepperLeaderboard() {
       <header className="header-safe px-4 pb-4">
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={() => navigate('/hotstepper')}
+            onClick={() => navigate('/dashboard')}
             className="p-2 rounded-lg hover:bg-[hsl(210,25%,20%)] press-scale"
           >
             <ArrowLeft className="w-5 h-5" />
