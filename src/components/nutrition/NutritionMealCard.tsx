@@ -17,7 +17,7 @@ export default function NutritionMealCard({
   const time = format(new Date(meal.created_at), 'HH:mm');
 
   return (
-    <div className="nutrition-card p-4 flex items-center gap-4">
+    <div className="nutrition-card-glow p-4 flex items-center gap-4 rounded-xl">
       {/* Time badge */}
       <div className="flex-shrink-0 w-14 text-center">
         <span className="text-cyan-400 text-sm font-mono">{time}</span>
@@ -25,8 +25,8 @@ export default function NutritionMealCard({
 
       {/* Meal info */}
       <div className="flex-1 min-w-0">
-        <h4 className="text-white font-medium truncate">{meal.meal_name}</h4>
-        <div className="flex items-center gap-3 mt-1 text-xs text-zinc-500">
+        <h4 className="text-zinc-100 font-medium truncate">{meal.meal_name}</h4>
+        <div className="flex items-center gap-3 mt-1 text-xs">
           <span className="text-green-400">P:{meal.protein}g</span>
           <span className="text-yellow-400">C:{meal.carbs}g</span>
           <span className="text-rose-400">F:{meal.fats}g</span>

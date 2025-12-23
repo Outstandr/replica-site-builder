@@ -501,7 +501,14 @@
 
 .nutrition-card {
   background: hsl(var(--nut-bg-card));
-  border: 1px solid hsl(var(--nut-text-secondary) / 0.1);
+  border: 1px solid hsl(var(--nut-text-secondary) / 0.15);
+  border-radius: 0.75rem;
+}
+
+.nutrition-card-glow {
+  background: hsl(var(--nut-bg-card));
+  border: 1px solid hsl(186 100% 50% / 0.2);
+  box-shadow: 0 0 20px hsl(186 100% 50% / 0.1), inset 0 1px 0 hsl(186 100% 50% / 0.05);
 }
 
 .nutrition-text-primary {

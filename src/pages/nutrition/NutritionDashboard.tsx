@@ -83,7 +83,7 @@ export default function NutritionDashboard() {
         <section className="animate-fade-in animation-delay-200">
           <Link
             to="/nutrition/scanner"
-            className="nutrition-card-glow flex items-center justify-center gap-3 p-4 hover:border-cyan-400/50 transition-all group"
+            className="nutrition-card-glow flex items-center justify-center gap-3 p-4 rounded-xl hover:border-cyan-400/50 transition-all group"
           >
             <div className="w-10 h-10 rounded-full bg-cyan-400/20 flex items-center justify-center group-hover:bg-cyan-400/30 transition-colors">
               <Plus className="w-5 h-5 text-cyan-400" />
@@ -109,12 +109,12 @@ export default function NutritionDashboard() {
           {logsLoading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="nutrition-card h-20 animate-pulse" />
+                <div key={i} className="nutrition-card-glow h-20 rounded-xl animate-pulse" />
               ))}
             </div>
           ) : todayLogs.length === 0 ? (
-            <div className="nutrition-card p-8 text-center">
-              <p className="text-zinc-500">No rations logged today</p>
+            <div className="nutrition-card-glow p-8 text-center rounded-xl">
+              <p className="text-zinc-400">No rations logged today</p>
               <Link 
                 to="/nutrition/scanner"
                 className="text-cyan-400 text-sm mt-2 inline-block hover:underline"
