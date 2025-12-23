@@ -39,6 +39,9 @@ import {
   NutritionProtocol,
 } from "./pages/nutrition";
 
+// Garden Pages
+import { QuizLibrary, QuizPlayer } from "./pages/garden";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -78,6 +81,10 @@ const App = () => (
                 <Route path="/nutrition/scanner" element={<NutritionScanner />} />
                 <Route path="/nutrition/log" element={<NutritionLog />} />
                 <Route path="/nutrition/protocol" element={<NutritionProtocol />} />
+                
+                {/* Soul Garden Routes */}
+                <Route path="/garden/quizzes" element={<QuizLibrary />} />
+                <Route path="/garden/quizzes/:quizId" element={<QuizPlayer />} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
