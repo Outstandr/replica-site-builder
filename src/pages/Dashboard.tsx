@@ -26,7 +26,8 @@ import {
   Play,
   Heart,
   Library,
-  PenLine
+  PenLine,
+  Footprints
 } from 'lucide-react';
 
 interface UserProgress {
@@ -127,6 +128,14 @@ const Dashboard = () => {
   const journeyProgress = Math.round((completedSteps.length / 5) * 100);
 
   const quickAccessItems = [
+    {
+      title: 'HotStepper',
+      description: '10,000 steps challenge',
+      icon: Footprints,
+      href: '/hotstepper',
+      color: 'hsl(186, 100%, 50%)',
+      gradient: 'linear-gradient(135deg, hsl(186, 100%, 50%), hsl(186, 80%, 40%))'
+    },
     {
       title: 'Masterclass Library',
       description: 'Expert-led video lessons',
