@@ -23,8 +23,8 @@ export function HotstepperBottomNav() {
   };
 
   return (
-    <nav className="bottom-nav safe-area-pb">
-      <div className="flex items-center justify-around px-2 py-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-[hsl(210,28%,12%)]/95 backdrop-blur-xl border-t border-[hsl(210,15%,20%)] safe-area-bottom">
+      <div className="flex items-center justify-around h-16 max-w-lg mx-auto px-2">
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (
@@ -32,27 +32,30 @@ export function HotstepperBottomNav() {
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                'flex flex-col items-center gap-1 px-4 py-2 rounded-xl press-scale transition-all duration-200 relative min-w-[60px]',
+                'flex flex-col items-center justify-center gap-1 py-2 px-3 rounded-xl transition-all duration-200 min-w-[64px]',
+                'active:scale-95',
                 active 
                   ? 'text-[hsl(186,100%,50%)]' 
                   : 'text-[hsl(210,15%,55%)] hover:text-[hsl(210,15%,70%)]'
               )}
             >
-              {active && (
-                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[hsl(186,100%,50%)] rounded-full shadow-glow-sm" />
-              )}
-              {active && (
-                <div className="absolute inset-0 bg-[hsl(186,100%,50%)/0.1] rounded-xl" />
-              )}
-              <item.icon 
-                className={cn(
-                  'w-5 h-5 relative z-10 transition-transform duration-200',
-                  active && 'scale-110'
-                )} 
-              />
+              <div className={cn(
+                'relative p-1.5 rounded-xl transition-all duration-300',
+                active && 'bg-[hsl(186,100%,50%)]/10'
+              )}>
+                <item.icon 
+                  className={cn(
+                    'w-5 h-5 transition-transform duration-200',
+                    active && 'scale-110'
+                  )} 
+                />
+                {active && (
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[hsl(186,100%,50%)]" />
+                )}
+              </div>
               <span className={cn(
-                'text-[10px] font-medium relative z-10 uppercase tracking-wider',
-                active && 'font-semibold'
+                'text-[10px] font-medium transition-all duration-200',
+                active ? 'opacity-100' : 'opacity-70'
               )}>
                 {item.label}
               </span>

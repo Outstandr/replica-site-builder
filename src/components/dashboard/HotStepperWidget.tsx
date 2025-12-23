@@ -33,8 +33,15 @@ const HotStepperWidget = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onClick={() => navigate('/hotstepper')}
+      role="button"
+      tabIndex={0}
       className="bg-[#1e293b] rounded-xl p-4 cursor-pointer hover:scale-[1.01] active:scale-[0.99] transition-transform duration-200 shadow-xl"
     >
+      {/* Title - Bottom Left */}
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">HotStepper</span>
+      </div>
+
       <div className="flex items-center gap-4">
         {/* Left Side - Steps Ring (35%) */}
         <div className="flex flex-col items-center flex-shrink-0">
