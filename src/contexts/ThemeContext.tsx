@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-type Theme = 'warm' | 'cool';
+type GenderTheme = 'female' | 'male';
 
 interface ThemeContextType {
-  theme: Theme;
+  theme: GenderTheme;
   toggleTheme: () => void;
+  setTheme: (theme: GenderTheme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -14,29 +15,26 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setTheme] = useState<GenderTheme>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('app-theme');
-      return (saved as Theme) || 'warm';
+      const saved = localStorage.getItem('gender-theme');
+      return (saved as GenderTheme) || 'female';
     }
-    return 'warm';
+    return 'female';
   });
 
   useEffect(() => {
-    if (theme === 'cool') {
-      document.body.classList.add('theme-cool');
-    } else {
-      document.body.classList.remove('theme-cool');
-    }
-    localStorage.setItem('app-theme', theme);
+    // Set data-theme attribute on document.documentElement (html tag)
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('gender-theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'warm' ? 'cool' : 'warm');
+    setTheme(prev => prev === 'female' ? 'male' : 'female');
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );

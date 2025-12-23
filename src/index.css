@@ -99,20 +99,28 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* ====== WARM/COOL DYNAMIC THEME (RGB format) ====== */
-    /* Default: Warm Theme - Sophisticated, grounded, nurturing */
-    --theme-bg: 250 249 246;
-    --theme-text: 74 66 56;
-    --theme-accent: 184 111 82;
-    --theme-secondary: 231 229 228;
+    /* ====== DUAL-UNIVERSE THEME ENGINE ====== */
+    /* Default: Female Theme - Nurturing, Organic, Soft */
+    --bg-primary: 250 249 246;     /* Warm Cream #FAF9F6 */
+    --text-primary: 60 50 40;      /* Warm Brown/Grey */
+    --accent-color: 204 165 149;   /* Terracotta #CCA595 */
+    --secondary-color: 231 229 228;
+    --radius-heavy: 24px;          /* Soft Cards */
+    --radius-light: 9999px;        /* Pill Buttons */
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Lato', sans-serif;
   }
 
-  /* Cool Theme Override - Focused, stoic, sharp */
-  .theme-cool {
-    --theme-bg: 15 23 42;
-    --theme-text: 226 232 240;
-    --theme-accent: 8 145 178;
-    --theme-secondary: 51 65 85;
+  /* Male Theme Override - Disciplined, Stoic, Sharp */
+  [data-theme='male'] {
+    --bg-primary: 15 23 42;        /* Dark Slate #0F172A */
+    --text-primary: 226 232 240;   /* Cool White */
+    --accent-color: 6 182 212;     /* Electric Cyan #06B6D4 */
+    --secondary-color: 51 65 85;
+    --radius-heavy: 0px;           /* Sharp Cards */
+    --radius-light: 2px;           /* Tactical Buttons */
+    --font-heading: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', sans-serif;
   }
 
   .dark {
@@ -171,10 +179,17 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-[rgb(var(--theme-bg))] text-[rgb(var(--theme-text))] transition-colors duration-300;
+    @apply transition-all duration-500 ease-in-out;
+    background-color: rgb(var(--bg-primary));
+    color: rgb(var(--text-primary));
+    font-family: var(--font-body);
     font-feature-settings: "kern" 1, "liga" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
   }
 
   /* Smooth scroll behavior for journey navigation */
