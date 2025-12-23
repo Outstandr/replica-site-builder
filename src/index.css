@@ -667,4 +667,199 @@ All colors MUST be HSL.
     @apply uppercase tracking-widest text-xs font-semibold;
     color: hsl(210 15% 55%);
   }
+
+  /* ============= TACTICAL NUTRITION THEME ============= */
+  
+  .nutrition-theme {
+    --nutrition-bg: 0 0% 4%;
+    --nutrition-card: 0 0% 8%;
+    --nutrition-border: 0 0% 15%;
+    --nutrition-cyan: 186 100% 50%;
+    --nutrition-cyan-glow: 0 0 20px hsl(186 100% 50% / 0.4);
+    background-color: hsl(var(--nutrition-bg));
+    color: hsl(0 0% 95%);
+  }
+
+  .nutrition-card {
+    @apply rounded-xl border;
+    background: hsl(0 0% 8%);
+    border-color: hsl(0 0% 15%);
+  }
+
+  .nutrition-card-glow {
+    @apply nutrition-card;
+    box-shadow: 0 0 20px hsl(186 100% 50% / 0.15);
+    border-color: hsl(186 100% 50% / 0.3);
+  }
+
+  /* HUD Viewfinder Effect */
+  .hud-viewfinder {
+    position: relative;
+  }
+
+  .hud-viewfinder::before,
+  .hud-viewfinder::after,
+  .hud-viewfinder > .corner-tl,
+  .hud-viewfinder > .corner-tr,
+  .hud-viewfinder > .corner-bl,
+  .hud-viewfinder > .corner-br {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-color: hsl(186 100% 50%);
+  }
+
+  .hud-corner {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-color: hsl(186 100% 50%);
+  }
+
+  .hud-corner-tl {
+    top: 0;
+    left: 0;
+    border-top: 3px solid;
+    border-left: 3px solid;
+  }
+
+  .hud-corner-tr {
+    top: 0;
+    right: 0;
+    border-top: 3px solid;
+    border-right: 3px solid;
+  }
+
+  .hud-corner-bl {
+    bottom: 0;
+    left: 0;
+    border-bottom: 3px solid;
+    border-left: 3px solid;
+  }
+
+  .hud-corner-br {
+    bottom: 0;
+    right: 0;
+    border-bottom: 3px solid;
+    border-right: 3px solid;
+  }
+
+  /* Radar Scan Animation */
+  @keyframes radar-scan {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-radar-scan {
+    animation: radar-scan 2s linear infinite;
+  }
+
+  /* Radar Sweep Effect */
+  @keyframes radar-sweep {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 0.6;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.5);
+    }
+  }
+
+  .animate-radar-sweep {
+    animation: radar-sweep 1.5s ease-out infinite;
+  }
+
+  /* Glitch Text Effect */
+  @keyframes glitch {
+    0%, 100% {
+      text-shadow: 
+        2px 0 hsl(186 100% 50%),
+        -2px 0 hsl(0 100% 50%);
+    }
+    25% {
+      text-shadow: 
+        -2px 0 hsl(186 100% 50%),
+        2px 0 hsl(0 100% 50%);
+    }
+    50% {
+      text-shadow: 
+        2px 2px hsl(186 100% 50%),
+        -2px -2px hsl(0 100% 50%);
+    }
+    75% {
+      text-shadow: 
+        -2px 2px hsl(186 100% 50%),
+        2px -2px hsl(0 100% 50%);
+    }
+  }
+
+  .glitch-text {
+    animation: glitch 0.3s ease-in-out infinite;
+  }
+
+  .glitch-text-subtle {
+    animation: glitch 3s ease-in-out infinite;
+  }
+
+  /* Scanning Line Effect */
+  @keyframes scan-line {
+    0% {
+      top: 0%;
+    }
+    100% {
+      top: 100%;
+    }
+  }
+
+  .scan-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent 0%,
+      hsl(186 100% 50% / 0.5) 50%,
+      transparent 100%);
+    animation: scan-line 2s linear infinite;
+  }
+
+  /* Nutrition Gradient */
+  .gradient-nutrition {
+    background: linear-gradient(135deg,
+      hsl(0 0% 8%) 0%,
+      hsl(186 100% 50% / 0.1) 100%);
+  }
+
+  /* Macro Colors */
+  .macro-protein {
+    color: hsl(142 76% 56%);
+  }
+
+  .macro-carbs {
+    color: hsl(45 93% 58%);
+  }
+
+  .macro-fats {
+    color: hsl(350 89% 60%);
+  }
+
+  .bg-macro-protein {
+    background-color: hsl(142 76% 56%);
+  }
+
+  .bg-macro-carbs {
+    background-color: hsl(45 93% 58%);
+  }
+
+  .bg-macro-fats {
+    background-color: hsl(350 89% 60%);
+  }
 }

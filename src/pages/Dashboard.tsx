@@ -27,7 +27,8 @@ import {
   Heart,
   Library,
   PenLine,
-  Footprints
+  Footprints,
+  UtensilsCrossed
 } from 'lucide-react';
 
 interface UserProgress {
@@ -135,6 +136,14 @@ const Dashboard = () => {
       href: '/hotstepper',
       color: 'hsl(186, 100%, 50%)',
       gradient: 'linear-gradient(135deg, hsl(186, 100%, 50%), hsl(186, 80%, 40%))'
+    },
+    {
+      title: 'Ration Control',
+      description: 'AI-powered calorie tracker',
+      icon: UtensilsCrossed,
+      href: '/nutrition',
+      color: 'hsl(186, 100%, 50%)',
+      gradient: 'linear-gradient(135deg, hsl(186, 100%, 40%), hsl(200, 80%, 30%))'
     },
     {
       title: 'Masterclass Library',

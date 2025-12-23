@@ -314,12 +314,49 @@ export type Database = {
         }
         Relationships: []
       }
+      meal_logs: {
+        Row: {
+          calories: number
+          carbs: number | null
+          created_at: string | null
+          fats: number | null
+          id: string
+          image_url: string | null
+          meal_name: string
+          protein: number | null
+          user_id: string
+        }
+        Insert: {
+          calories: number
+          carbs?: number | null
+          created_at?: string | null
+          fats?: number | null
+          id?: string
+          image_url?: string | null
+          meal_name: string
+          protein?: number | null
+          user_id: string
+        }
+        Update: {
+          calories?: number
+          carbs?: number | null
+          created_at?: string | null
+          fats?: number | null
+          id?: string
+          image_url?: string | null
+          meal_name?: string
+          protein?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           bio: string | null
           birth_date: string | null
           created_at: string
+          daily_calorie_goal: number | null
           daily_step_goal: number | null
           display_name: string | null
           height_cm: number | null
@@ -335,6 +372,7 @@ export type Database = {
           bio?: string | null
           birth_date?: string | null
           created_at?: string
+          daily_calorie_goal?: number | null
           daily_step_goal?: number | null
           display_name?: string | null
           height_cm?: number | null
@@ -350,6 +388,7 @@ export type Database = {
           bio?: string | null
           birth_date?: string | null
           created_at?: string
+          daily_calorie_goal?: number | null
           daily_step_goal?: number | null
           display_name?: string | null
           height_cm?: number | null
