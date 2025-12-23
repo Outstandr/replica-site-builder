@@ -29,6 +29,14 @@ import {
   HotstepperProtocol,
 } from "./pages/hotstepper";
 
+// Nutrition Pages
+import {
+  NutritionDashboard,
+  NutritionScanner,
+  NutritionLog,
+  NutritionProtocol,
+} from "./pages/nutrition";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -60,6 +68,12 @@ const App = () => (
               <Route path="/hotstepper/audiobook" element={<HotstepperAudiobook />} />
               <Route path="/hotstepper/protocol" element={<HotstepperProtocol />} />
               <Route path="/hotstepper/profile" element={<HotstepperProfile />} />
+              
+              {/* Tactical Nutrition Routes */}
+              <Route path="/nutrition" element={<NutritionDashboard />} />
+              <Route path="/nutrition/scanner" element={<NutritionScanner />} />
+              <Route path="/nutrition/log" element={<NutritionLog />} />
+              <Route path="/nutrition/protocol" element={<NutritionProtocol />} />
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
