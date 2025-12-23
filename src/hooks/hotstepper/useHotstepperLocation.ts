@@ -1,4 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { HotStepperService, PositionUpdate } from '@/services/HotStepperService';
+import { isWeb } from '@/utils/safeNative';
 
 interface Position {
   latitude: number;
@@ -51,20 +53,80 @@ export function useHotstepperLocation() {
     error: null,
   });
 
-  const watchIdRef = useRef<number | null>(null);
+  const watchIdRef = useRef<string | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const speedHistoryRef = useRef<number[]>([]);
+  const webWatchIdRef = useRef<number | null>(null);
 
-  const startTracking = useCallback(() => {
-    if (!navigator.geolocation) {
-      setState(prev => ({
+  // Process position update (shared between native and web)
+  const processPositionUpdate = useCallback((position: PositionUpdate) => {
+    const newPosition: Position = {
+      latitude: position.latitude,
+      longitude: position.longitude,
+      accuracy: position.accuracy,
+      timestamp: position.timestamp,
+    };
+
+    const newRoutePoint: RoutePoint = {
+      lat: position.latitude,
+      lng: position.longitude,
+      timestamp: position.timestamp,
+    };
+
+    setState(prev => {
+      const newRoutePoints = [...prev.routePoints, newRoutePoint];
+      
+      // Calculate distance from previous point
+      let newDistance = prev.totalDistance;
+      let currentSpeed = position.speed ?? 0;
+
+      if (prev.routePoints.length > 0) {
+        const lastPoint = prev.routePoints[prev.routePoints.length - 1];
+        const segmentDistance = calculateDistance(
+          lastPoint.lat,
+          lastPoint.lng,
+          newRoutePoint.lat,
+          newRoutePoint.lng
+        );
+        
+        // Filter out GPS jumps (> 100m in very short time likely an error)
+        const timeDiff = (newRoutePoint.timestamp - lastPoint.timestamp) / 1000;
+        if (segmentDistance < 0.1 || timeDiff > 1) {
+          newDistance += segmentDistance;
+          
+          // Calculate current speed if not provided
+          if (timeDiff > 0 && !position.speed) {
+            currentSpeed = (segmentDistance / timeDiff) * 3600;
+          }
+          speedHistoryRef.current.push(currentSpeed);
+        }
+      }
+
+      // Calculate average and max speed
+      const speeds = speedHistoryRef.current;
+      const avgSpeed = speeds.length > 0 
+        ? speeds.reduce((a, b) => a + b, 0) / speeds.length 
+        : 0;
+      const maxSpeed = speeds.length > 0 
+        ? Math.max(...speeds) 
+        : 0;
+
+      return {
         ...prev,
-        error: 'Geolocation is not supported by your browser',
-        gpsStatus: 'error',
-      }));
-      return;
-    }
+        currentPosition: newPosition,
+        routePoints: newRoutePoints,
+        totalDistance: newDistance,
+        currentSpeed: Math.min(currentSpeed, 50),
+        avgSpeed,
+        maxSpeed,
+        gpsStatus: 'active',
+        error: null,
+      };
+    });
+  }, []);
 
+  // Start tracking using crash-proof HotStepperService
+  const startTracking = useCallback(async () => {
     setState(prev => ({
       ...prev,
       isTracking: true,
@@ -80,90 +142,81 @@ export function useHotstepperLocation() {
     startTimeRef.current = Date.now();
     speedHistoryRef.current = [];
 
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      (position) => {
-        const newPosition: Position = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy,
-          timestamp: position.timestamp,
-        };
-
-        const newRoutePoint: RoutePoint = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-          timestamp: position.timestamp,
-        };
-
-        setState(prev => {
-          const newRoutePoints = [...prev.routePoints, newRoutePoint];
-          
-          // Calculate distance from previous point
-          let newDistance = prev.totalDistance;
-          let currentSpeed = 0;
-
-          if (prev.routePoints.length > 0) {
-            const lastPoint = prev.routePoints[prev.routePoints.length - 1];
-            const segmentDistance = calculateDistance(
-              lastPoint.lat,
-              lastPoint.lng,
-              newRoutePoint.lat,
-              newRoutePoint.lng
-            );
-            
-            // Filter out GPS jumps (> 100m in very short time likely an error)
-            const timeDiff = (newRoutePoint.timestamp - lastPoint.timestamp) / 1000; // seconds
-            if (segmentDistance < 0.1 || timeDiff > 1) { // Less than 100m or more than 1 second
-              newDistance += segmentDistance;
-              
-              // Calculate current speed (km/h)
-              if (timeDiff > 0) {
-                currentSpeed = (segmentDistance / timeDiff) * 3600;
-                speedHistoryRef.current.push(currentSpeed);
-              }
-            }
-          }
-
-          // Calculate average and max speed
-          const speeds = speedHistoryRef.current;
-          const avgSpeed = speeds.length > 0 
-            ? speeds.reduce((a, b) => a + b, 0) / speeds.length 
-            : 0;
-          const maxSpeed = speeds.length > 0 
-            ? Math.max(...speeds) 
-            : 0;
-
-          return {
-            ...prev,
-            currentPosition: newPosition,
-            routePoints: newRoutePoints,
-            totalDistance: newDistance,
-            currentSpeed: Math.min(currentSpeed, 50), // Cap at 50 km/h for walking/running
-            avgSpeed,
-            maxSpeed,
-            gpsStatus: 'active',
-            error: null,
-          };
-        });
-      },
-      (error) => {
+    // Use web geolocation API directly for web platform
+    if (isWeb()) {
+      if (!navigator.geolocation) {
         setState(prev => ({
           ...prev,
-          error: error.message,
+          error: 'Geolocation is not supported by your browser',
           gpsStatus: 'error',
         }));
+        return;
+      }
+
+      webWatchIdRef.current = navigator.geolocation.watchPosition(
+        (geoPosition) => {
+          processPositionUpdate({
+            latitude: geoPosition.coords.latitude,
+            longitude: geoPosition.coords.longitude,
+            accuracy: geoPosition.coords.accuracy,
+            speed: geoPosition.coords.speed ?? null,
+            timestamp: geoPosition.timestamp,
+          });
+        },
+        (error) => {
+          console.warn('[HotstepperLocation] Web GPS error:', error.message);
+          setState(prev => ({
+            ...prev,
+            error: error.message,
+            gpsStatus: 'error',
+          }));
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+      return;
+    }
+
+    // Use crash-proof HotStepperService for native
+    const watchId = await HotStepperService.watchPosition(
+      (position) => {
+        processPositionUpdate(position);
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
+      (error) => {
+        console.warn('[HotstepperLocation] GPS error:', error);
+        setState(prev => ({
+          ...prev,
+          error,
+          gpsStatus: 'error',
+        }));
       }
     );
-  }, []);
 
-  const stopTracking = useCallback(() => {
+    if (watchId) {
+      watchIdRef.current = watchId;
+    } else {
+      setState(prev => ({
+        ...prev,
+        gpsStatus: 'error',
+        error: 'Could not start GPS tracking',
+      }));
+    }
+  }, [processPositionUpdate]);
+
+  // Stop tracking
+  const stopTracking = useCallback(async () => {
+    // Clear web watch
+    if (webWatchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(webWatchIdRef.current);
+      webWatchIdRef.current = null;
+    }
+
+    // Clear native watch
     if (watchIdRef.current !== null) {
-      navigator.geolocation.clearWatch(watchIdRef.current);
+      await HotStepperService.clearPositionWatch(watchIdRef.current);
       watchIdRef.current = null;
     }
 
@@ -185,8 +238,11 @@ export function useHotstepperLocation() {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
+      if (webWatchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(webWatchIdRef.current);
+      }
       if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
+        HotStepperService.clearPositionWatch(watchIdRef.current);
       }
     };
   }, []);

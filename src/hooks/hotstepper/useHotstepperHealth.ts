@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { HotStepperService } from '@/services/HotStepperService';
 import { healthService, getSimulatedSteps } from '@/services/healthService';
+import { isWeb } from '@/utils/safeNative';
 
 interface HealthData {
   steps: number;
@@ -42,13 +44,18 @@ export function useHotstepperHealth() {
   const refreshIntervalRef = useRef<number | null>(null);
   const simulationIntervalRef = useRef<number | null>(null);
 
-  // Fetch data from health service (native or simulated)
+  // Fetch data from crash-proof HotStepperService
   const fetchFromHealthService = useCallback(async () => {
     try {
-      const data = await healthService.queryDailySteps();
-      return data;
+      const stats = await HotStepperService.getCurrentStats();
+      return {
+        steps: stats.steps,
+        distance: stats.distance,
+        calories: stats.calories,
+        activeMinutes: stats.activeMinutes,
+      };
     } catch (err) {
-      console.error('Health service query failed:', err);
+      console.error('HotStepperService query failed:', err);
       return null;
     }
   }, []);
@@ -218,12 +225,14 @@ export function useHotstepperHealth() {
     await updateSteps(newTotal);
   }, [healthData.steps, updateSteps]);
 
-  // Start web simulation mode
+  // Start tracking using crash-proof service
   const startSimulation = useCallback(async () => {
-    if (healthService.platform !== 'web') return;
+    if (!isWeb()) return;
     
     setIsSimulating(true);
-    await healthService.startBackgroundTracking();
+    
+    // Use crash-proof HotStepperService
+    await HotStepperService.startTracking();
     
     // Fast refresh for smooth step updates
     simulationIntervalRef.current = window.setInterval(async () => {
@@ -248,7 +257,9 @@ export function useHotstepperHealth() {
 
   const stopSimulation = useCallback(async () => {
     setIsSimulating(false);
-    await healthService.stopBackgroundTracking();
+    
+    // Use crash-proof HotStepperService
+    await HotStepperService.stopTracking();
     
     if (simulationIntervalRef.current) {
       clearInterval(simulationIntervalRef.current);
@@ -261,7 +272,7 @@ export function useHotstepperHealth() {
     fetchWeeklyData();
     
     // Set up auto-refresh interval (30 seconds for native, handled separately for web)
-    if (healthService.platform !== 'web') {
+    if (!isWeb()) {
       refreshIntervalRef.current = window.setInterval(() => {
         fetchTodayData();
       }, AUTO_REFRESH_INTERVAL);
@@ -286,8 +297,11 @@ export function useHotstepperHealth() {
     updateSteps,
     addSteps,
     refresh: fetchTodayData,
+    startTracking: startSimulation,
+    stopTracking: stopSimulation,
     startSimulation,
     stopSimulation,
-    platform: healthService.platform,
+    platform: isWeb() ? 'web' : healthService.platform,
+    isTrackingActive: HotStepperService.isTracking(),
   };
 }

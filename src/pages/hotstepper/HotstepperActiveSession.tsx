@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Square, Footprints } from 'lucide-react';
 import { HotstepperLayout } from '@/components/hotstepper/HotstepperLayout';
 import HotstepperMap from '@/components/hotstepper/HotstepperMap';
 import { HotstepperSessionStats } from '@/components/hotstepper/HotstepperSessionStats';
 import { useHotstepperSession, useHotstepperLocation, useHotstepperHealth } from '@/hooks/hotstepper';
+import { HotStepperService } from '@/services/HotStepperService';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function HotstepperActiveSession() {
   const navigate = useNavigate();
@@ -13,12 +15,24 @@ export default function HotstepperActiveSession() {
   const location = useHotstepperLocation();
   const { addSteps } = useHotstepperHealth();
 
-  // Start session and GPS on mount if not already active
+  // Start session and GPS on mount using crash-proof service
   useEffect(() => {
-    if (!session.isActive) {
-      startSession('gps');
-      location.startTracking();
-    }
+    const initSession = async () => {
+      if (!session.isActive) {
+        // Use crash-proof HotStepperService
+        const trackingSession = await HotStepperService.startTracking();
+        
+        if (trackingSession) {
+          startSession('gps');
+          location.startTracking();
+        } else {
+          // Service handled the error toast, just navigate back
+          toast.error('Could not start tracking session');
+        }
+      }
+    };
+    
+    initSession();
   }, []);
 
   // Sync location data to session
@@ -33,17 +47,23 @@ export default function HotstepperActiveSession() {
     }
   }, [location.totalDistance, location.avgSpeed, location.routePoints]);
 
-  const handleEndSession = async () => {
+  const handleEndSession = useCallback(async () => {
+    // Stop location tracking
     location.stopTracking();
+    
+    // Stop crash-proof service
+    await HotStepperService.stopTracking();
+    
     const completedSession = await endSession();
     
     if (completedSession) {
       // Add session steps to daily total
       await addSteps(completedSession.steps || Math.round(completedSession.distance * 1300));
+      toast.success('Session completed!');
     }
     
     navigate('/dashboard');
-  };
+  }, [location, endSession, addSteps, navigate]);
 
   const handleUseStepsOnly = () => {
     location.stopTracking();
