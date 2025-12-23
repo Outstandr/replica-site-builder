@@ -52,8 +52,8 @@ const App = () => (
           <AuthProvider>
             <Toaster />
             <Sonner />
-            <ThemeToggleBtn />
             <BrowserRouter>
+              <ThemeToggleBtn />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
