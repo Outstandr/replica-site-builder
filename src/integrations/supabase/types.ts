@@ -35,6 +35,189 @@ export type Database = {
         }
         Relationships: []
       }
+      hotstepper_audiobook_bookmarks: {
+        Row: {
+          chapter_id: number
+          created_at: string | null
+          id: string
+          label: string | null
+          timestamp_seconds: number
+          user_id: string
+        }
+        Insert: {
+          chapter_id: number
+          created_at?: string | null
+          id?: string
+          label?: string | null
+          timestamp_seconds: number
+          user_id: string
+        }
+        Update: {
+          chapter_id?: number
+          created_at?: string | null
+          id?: string
+          label?: string | null
+          timestamp_seconds?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hotstepper_audiobook_progress: {
+        Row: {
+          chapter_id: number
+          completed: boolean | null
+          created_at: string | null
+          id: string
+          last_played_at: string | null
+          progress_seconds: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          chapter_id: number
+          completed?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_played_at?: string | null
+          progress_seconds?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          chapter_id?: number
+          completed?: boolean | null
+          created_at?: string | null
+          id?: string
+          last_played_at?: string | null
+          progress_seconds?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hotstepper_daily_steps: {
+        Row: {
+          active_minutes: number | null
+          calories: number | null
+          created_at: string | null
+          data_source: string | null
+          date: string
+          distance_km: number | null
+          id: string
+          steps: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          active_minutes?: number | null
+          calories?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          date?: string
+          distance_km?: number | null
+          id?: string
+          steps?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          active_minutes?: number | null
+          calories?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          date?: string
+          distance_km?: number | null
+          id?: string
+          steps?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hotstepper_sessions: {
+        Row: {
+          avg_pace: number | null
+          avg_speed: number | null
+          created_at: string | null
+          data_source: string | null
+          distance_km: number | null
+          duration_seconds: number | null
+          ended_at: string | null
+          id: string
+          is_active: boolean | null
+          max_speed: number | null
+          route_points: Json | null
+          started_at: string | null
+          steps: number | null
+          user_id: string
+        }
+        Insert: {
+          avg_pace?: number | null
+          avg_speed?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          distance_km?: number | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_speed?: number | null
+          route_points?: Json | null
+          started_at?: string | null
+          steps?: number | null
+          user_id: string
+        }
+        Update: {
+          avg_pace?: number | null
+          avg_speed?: number | null
+          created_at?: string | null
+          data_source?: string | null
+          distance_km?: number | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_speed?: number | null
+          route_points?: Json | null
+          started_at?: string | null
+          steps?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hotstepper_streaks: {
+        Row: {
+          created_at: string | null
+          current_streak: number | null
+          id: string
+          last_target_hit_date: string | null
+          longest_streak: number | null
+          total_days_completed: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_target_hit_date?: string | null
+          longest_streak?: number | null
+          total_days_completed?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          current_streak?: number | null
+          id?: string
+          last_target_hit_date?: string | null
+          longest_streak?: number | null
+          total_days_completed?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       journal_entries: {
         Row: {
           content: string
@@ -135,32 +318,47 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          birth_date: string | null
           created_at: string
+          daily_step_goal: number | null
           display_name: string | null
+          height_cm: number | null
+          hotstepper_onboarded: boolean | null
           id: string
           preferred_language: string | null
           updated_at: string
           user_id: string
+          weight_kg: number | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          birth_date?: string | null
           created_at?: string
+          daily_step_goal?: number | null
           display_name?: string | null
+          height_cm?: number | null
+          hotstepper_onboarded?: boolean | null
           id?: string
           preferred_language?: string | null
           updated_at?: string
           user_id: string
+          weight_kg?: number | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          birth_date?: string | null
           created_at?: string
+          daily_step_goal?: number | null
           display_name?: string | null
+          height_cm?: number | null
+          hotstepper_onboarded?: boolean | null
           id?: string
           preferred_language?: string | null
           updated_at?: string
           user_id?: string
+          weight_kg?: number | null
         }
         Relationships: []
       }

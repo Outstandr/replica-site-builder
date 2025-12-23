@@ -468,4 +468,203 @@ All colors MUST be HSL.
   .animate-confetti {
     animation: confetti-fall 3s ease-in-out forwards;
   }
+
+  /* ============================================
+     HOTSTEPPER TACTICAL THEME
+     ============================================ */
+
+  /* HotStepper Theme Wrapper */
+  .hotstepper-theme {
+    --hs-background: 210 28% 10%;
+    --hs-foreground: 0 0% 95%;
+    --hs-card: 210 28% 14%;
+    --hs-card-foreground: 0 0% 95%;
+    --hs-primary: 186 100% 50%;
+    --hs-primary-foreground: 210 28% 10%;
+    --hs-muted: 210 25% 25%;
+    --hs-muted-foreground: 210 15% 65%;
+    --hs-border: 210 25% 22%;
+    --hs-destructive: 0 72% 51%;
+  }
+
+  /* Tactical Card */
+  .tactical-card {
+    @apply relative overflow-hidden;
+    background: hsl(210 28% 14% / 0.9);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(210 25% 25% / 0.5);
+    box-shadow: 0 4px 24px hsl(0 0% 0% / 0.3);
+  }
+
+  /* Press Scale for Touch */
+  .press-scale {
+    @apply transition-transform duration-150;
+  }
+
+  .press-scale:active {
+    transform: scale(0.98);
+  }
+
+  /* Cyan Glow Effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px hsl(186 100% 50% / 0.4),
+                0 0 40px hsl(186 100% 50% / 0.2);
+  }
+
+  .glow-cyan-soft {
+    box-shadow: 0 0 12px hsl(186 100% 50% / 0.3);
+  }
+
+  .shadow-glow-sm {
+    box-shadow: 0 0 8px hsl(186 100% 50% / 0.25);
+  }
+
+  .shadow-glow-md {
+    box-shadow: 0 0 16px hsl(186 100% 50% / 0.35);
+  }
+
+  .shadow-glow-lg {
+    box-shadow: 0 0 32px hsl(186 100% 50% / 0.45);
+  }
+
+  /* Text Glow */
+  .text-glow-cyan {
+    text-shadow: 0 0 10px hsl(186 100% 50% / 0.5),
+                 0 0 20px hsl(186 100% 50% / 0.3);
+  }
+
+  /* Pulse Glow Animation */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px hsl(186 100% 50% / 0.4);
+    }
+    50% {
+      box-shadow: 0 0 40px hsl(186 100% 50% / 0.6);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Success Glow */
+  @keyframes success-glow {
+    0% { opacity: 0; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.1); }
+    100% { opacity: 0; transform: scale(1.3); }
+  }
+
+  .animate-success-glow {
+    animation: success-glow 0.6s ease-out forwards;
+  }
+
+  /* Header Safe Area */
+  .header-safe {
+    padding-top: max(env(safe-area-inset-top), 12px);
+  }
+
+  /* Bottom Safe Area */
+  .safe-area-pb {
+    padding-bottom: max(env(safe-area-inset-bottom), 16px);
+  }
+
+  /* Rubber Band Scroll */
+  .rubber-band-scroll {
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Scroll Container */
+  .scroll-container {
+    @apply overflow-y-auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Bottom Nav Styles */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-50;
+    background: hsl(210 28% 12% / 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid hsl(210 25% 22% / 0.5);
+  }
+
+  /* Satellite Animation for GPS */
+  @keyframes satellite-orbit {
+    0% { transform: rotate(0deg) translateX(8px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(8px) rotate(-360deg); }
+  }
+
+  .animate-satellite {
+    animation: satellite-orbit 2s linear infinite;
+  }
+
+  /* Map Pin Bounce */
+  @keyframes pin-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .animate-pin-bounce {
+    animation: pin-bounce 1s ease-in-out infinite;
+  }
+
+  /* Timer Glow */
+  @keyframes timer-glow {
+    0%, 100% {
+      text-shadow: 0 0 20px hsl(186 100% 50% / 0.6);
+    }
+    50% {
+      text-shadow: 0 0 30px hsl(186 100% 50% / 0.9);
+    }
+  }
+
+  .animate-timer-glow {
+    animation: timer-glow 1.5s ease-in-out infinite;
+  }
+
+  /* Progress Ring Animation */
+  @keyframes progress-fill {
+    from { stroke-dashoffset: 283; }
+  }
+
+  .animate-progress-fill {
+    animation: progress-fill 1s ease-out forwards;
+  }
+
+  /* Tactical Gradient */
+  .gradient-tactical {
+    background: linear-gradient(135deg,
+      hsl(210 28% 12%) 0%,
+      hsl(210 28% 16%) 50%,
+      hsl(186 100% 50% / 0.1) 100%);
+  }
+
+  /* Cyan Gradient */
+  .gradient-cyan {
+    background: linear-gradient(135deg,
+      hsl(186 100% 50%) 0%,
+      hsl(186 80% 40%) 100%);
+  }
+
+  /* Stats Card Hover */
+  .stats-card-hover {
+    @apply transition-all duration-200;
+  }
+
+  .stats-card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px hsl(0 0% 0% / 0.3);
+  }
+
+  /* Tabular Numbers for Stats */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Uppercase Tracking for Labels */
+  .tactical-label {
+    @apply uppercase tracking-widest text-xs font-semibold;
+    color: hsl(210 15% 55%);
+  }
 }

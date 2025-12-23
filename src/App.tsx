@@ -19,6 +19,16 @@ import MasterclassLesson from "./pages/MasterclassLesson";
 import Certificate from "./pages/Certificate";
 import NotFound from "./pages/NotFound";
 
+// HotStepper Pages
+import {
+  HotstepperDashboard,
+  HotstepperActiveSession,
+  HotstepperLeaderboard,
+  HotstepperProfile,
+  HotstepperAudiobook,
+  HotstepperProtocol,
+} from "./pages/hotstepper";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -42,6 +52,15 @@ const App = () => (
               <Route path="/book/:moduleName" element={<BookLessons />} />
               <Route path="/book/:moduleName/:lessonId" element={<BookLessonContent />} />
               <Route path="/certificate/:certificateId" element={<Certificate />} />
+              
+              {/* HotStepper Challenge Routes */}
+              <Route path="/hotstepper" element={<HotstepperDashboard />} />
+              <Route path="/hotstepper/active" element={<HotstepperActiveSession />} />
+              <Route path="/hotstepper/leaderboard" element={<HotstepperLeaderboard />} />
+              <Route path="/hotstepper/audiobook" element={<HotstepperAudiobook />} />
+              <Route path="/hotstepper/protocol" element={<HotstepperProtocol />} />
+              <Route path="/hotstepper/profile" element={<HotstepperProfile />} />
+              
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
