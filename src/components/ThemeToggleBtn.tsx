@@ -1,4 +1,5 @@
 import { useTheme } from '@/contexts/ThemeContext';
+import { useLocation } from 'react-router-dom';
 
 // Venus (Female) and Mars (Male) SVG icons
 const VenusIcon = ({ className }: { className?: string }) => (
@@ -20,7 +21,13 @@ const MarsIcon = ({ className }: { className?: string }) => (
 
 export const ThemeToggleBtn = () => {
   const { theme, toggleTheme } = useTheme();
+  const { pathname } = useLocation();
   const isFemale = theme === 'female';
+
+  // Only show on dashboard
+  if (pathname !== '/dashboard') {
+    return null;
+  }
 
   return (
     <button
