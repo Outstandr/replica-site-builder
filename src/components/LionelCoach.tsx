@@ -1,9 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-import { MessageCircle, X, Send, Sparkles, Loader2 } from "lucide-react";
+import { MessageCircle, X, Send, Sparkles, Loader2, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 
 interface Message {
   role: "user" | "assistant";
@@ -20,15 +21,17 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/lionel-coach
 
 const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: `Hello${userName ? ` ${userName}` : ""}! I'm Lionel, your RESET journey companion. 🌱\n\nI'm here to support you on your path of transformation. Whether you need guidance, want to reflect on your progress, or just need someone to listen — I'm here.\n\nWhat's on your mind today?`,
+      content: `${userName ? `${userName}. ` : ""}Stop. Before you say anything. Ask yourself one question. Are you here to change? Or are you here to feel good about thinking about change? Because I don't do comfort. I do results. The 3% who actually transform their lives. Is that you? Prove it. Tell me what's holding you back right now.`,
     },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { play, stop, isPlaying, isLoading: audioLoading } = useAudioPlayer();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -44,6 +47,7 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
     
     setMessages(newMessages);
     setIsLoading(true);
+    stop(); // Stop any playing audio
 
     let assistantContent = "";
     
@@ -104,7 +108,6 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) updateAssistant(content);
           } catch {
-            // Incomplete JSON, will retry on next chunk
             buffer = line + "\n" + buffer;
             break;
           }
@@ -126,19 +129,24 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
           }
         }
       }
+
+      // Play voice if enabled
+      if (voiceEnabled && assistantContent.trim()) {
+        play(assistantContent);
+      }
     } catch (error) {
       console.error("Chat error:", error);
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content: "I apologize, but I encountered an issue. Please try again in a moment. 🙏",
+          content: "Connection lost. But that's not an excuse. Come back. Try again. Now.",
         },
       ]);
     } finally {
       setIsLoading(false);
     }
-  }, [messages, userName, currentModule, progress]);
+  }, [messages, userName, currentModule, progress, voiceEnabled, play, stop]);
 
   const handleSend = () => {
     if (!input.trim() || isLoading) return;
@@ -154,6 +162,13 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
     }
   };
 
+  const toggleVoice = () => {
+    if (isPlaying) {
+      stop();
+    }
+    setVoiceEnabled(!voiceEnabled);
+  };
+
   return (
     <>
       {/* Floating button */}
@@ -161,37 +176,59 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
         onClick={() => setIsOpen(true)}
         className={cn(
           "fixed bottom-24 right-4 w-14 h-14 rounded-full shadow-lg z-40",
-          "bg-gradient-to-br from-reset-systems to-reset-transformation",
-          "hover:scale-110 transition-transform",
+          "bg-gradient-to-br from-zinc-900 to-zinc-800",
+          "hover:scale-110 transition-transform border border-amber-500/30",
           isOpen && "hidden"
         )}
         size="icon"
       >
-        <MessageCircle className="w-6 h-6 text-white" />
+        <MessageCircle className="w-6 h-6 text-amber-500" />
       </Button>
 
       {/* Chat panel */}
       {isOpen && (
-        <div className="fixed inset-4 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] sm:max-h-[80vh] bg-card rounded-2xl shadow-2xl border-2 border-border z-50 flex flex-col overflow-hidden animate-scale-in">
+        <div className="fixed inset-4 sm:inset-auto sm:bottom-6 sm:right-6 sm:w-96 sm:h-[500px] sm:max-h-[80vh] bg-zinc-950 rounded-2xl shadow-2xl border border-amber-500/20 z-50 flex flex-col overflow-hidden animate-scale-in">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-border bg-gradient-to-r from-reset-systems/10 to-reset-transformation/10">
+          <div className="flex items-center justify-between p-4 border-b border-amber-500/20 bg-gradient-to-r from-zinc-900 to-zinc-950">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-reset-systems to-reset-transformation flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+              <div className={cn(
+                "w-10 h-10 rounded-full bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center",
+                (isPlaying || audioLoading) && "animate-pulse"
+              )}>
+                <Sparkles className="w-5 h-5 text-zinc-900" />
               </div>
               <div>
-                <h3 className="font-bold text-foreground">Lionel</h3>
-                <p className="text-xs text-muted-foreground">Your RESET Coach</p>
+                <h3 className="font-bold text-amber-500">Lionel X</h3>
+                <p className="text-xs text-zinc-500">
+                  {isPlaying ? "Speaking..." : audioLoading ? "Preparing voice..." : "High-Performance Architect"}
+                </p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(false)}
-              className="hover:bg-destructive/10"
-            >
-              <X className="w-5 h-5" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleVoice}
+                className={cn(
+                  "hover:bg-amber-500/10",
+                  voiceEnabled ? "text-amber-500" : "text-zinc-600"
+                )}
+                title={voiceEnabled ? "Disable voice" : "Enable voice"}
+              >
+                {voiceEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  stop();
+                  setIsOpen(false);
+                }}
+                className="hover:bg-red-500/10 text-zinc-500 hover:text-red-500"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
           </div>
 
           {/* Messages */}
@@ -209,8 +246,8 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
                     className={cn(
                       "max-w-[85%] rounded-2xl px-4 py-2 text-sm",
                       message.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-br-md"
-                        : "bg-muted text-foreground rounded-bl-md"
+                        ? "bg-amber-600 text-zinc-900 font-medium rounded-br-md"
+                        : "bg-zinc-900 text-zinc-200 rounded-bl-md border border-zinc-800"
                     )}
                   >
                     {message.content.split("\n").map((line, i) => (
@@ -224,8 +261,8 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
               
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex justify-start">
-                  <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-2">
-                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  <div className="bg-zinc-900 rounded-2xl rounded-bl-md px-4 py-2 border border-zinc-800">
+                    <Loader2 className="w-4 h-4 animate-spin text-amber-500" />
                   </div>
                 </div>
               )}
@@ -233,21 +270,21 @@ const LionelCoach = ({ userName, currentModule, progress }: LionelCoachProps) =>
           </ScrollArea>
 
           {/* Input */}
-          <div className="p-4 border-t border-border">
+          <div className="p-4 border-t border-amber-500/20 bg-zinc-900/50">
             <div className="flex gap-2">
               <Textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Share what's on your mind..."
-                className="min-h-[44px] max-h-32 resize-none"
+                placeholder="Speak your truth..."
+                className="min-h-[44px] max-h-32 resize-none bg-zinc-900 border-zinc-800 text-zinc-200 placeholder:text-zinc-600 focus-visible:ring-amber-500/50"
                 disabled={isLoading}
               />
               <Button
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading}
                 size="icon"
-                className="shrink-0"
+                className="shrink-0 bg-amber-600 hover:bg-amber-700 text-zinc-900"
               >
                 <Send className="w-4 h-4" />
               </Button>

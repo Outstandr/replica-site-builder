@@ -3,5 +3,11 @@ project_id = "apozfvpqdvlaksdhbxjy"
 [functions.lionel-coach]
 verify_jwt = false
 
+[functions.lionel-tts]
+verify_jwt = false
+
 [functions.analyze-food]
+verify_jwt = false
+
+[functions.get-maps-key]
 verify_jwt = false
