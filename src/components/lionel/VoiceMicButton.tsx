@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { Mic, Loader2, Volume2 } from "lucide-react";
+import { Mic, Volume2, Circle } from "lucide-react";
 
-export type VoiceState = "idle" | "recording" | "processing" | "playing";
+export type VoiceState = "disconnected" | "connected" | "speaking";
 
 interface VoiceMicButtonProps {
   state: VoiceState;
@@ -10,136 +10,119 @@ interface VoiceMicButtonProps {
 }
 
 export const VoiceMicButton = ({ state, onClick, disabled }: VoiceMicButtonProps) => {
-  const isDisabled = disabled || state === "processing" || state === "playing";
+  const isDisabled = disabled;
 
-  // Get animation props based on state
-  const getAnimationProps = () => {
-    switch (state) {
-      case "recording":
-        return {
-          scale: [1, 1.05, 1],
-          boxShadow: [
-            "0 0 30px rgba(239, 68, 68, 0.4), inset 0 0 20px rgba(0, 0, 0, 0.3)",
-            "0 0 60px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.3)",
-            "0 0 30px rgba(239, 68, 68, 0.4), inset 0 0 20px rgba(0, 0, 0, 0.3)",
-          ],
-        };
-      case "processing":
-        return {
-          scale: 1,
-          boxShadow: "0 0 40px rgba(245, 158, 11, 0.4), inset 0 0 20px rgba(0, 0, 0, 0.3)",
-        };
-      case "playing":
-        return {
-          scale: 1,
-          boxShadow: "0 0 50px rgba(245, 158, 11, 0.6), inset 0 0 20px rgba(0, 0, 0, 0.3)",
-        };
-      default:
-        return {
-          scale: 1,
-          boxShadow: "0 0 30px rgba(245, 158, 11, 0.2), inset 0 0 20px rgba(0, 0, 0, 0.3)",
-        };
-    }
-  };
-
-  const getTransitionProps = () => {
-    if (state === "recording") {
-      return {
-        duration: 1,
-        repeat: Infinity,
-        ease: "easeInOut" as const,
-      };
-    }
-    return { duration: 0.3 };
-  };
-
-  // Icon based on state
-  const renderIcon = () => {
-    switch (state) {
-      case "processing":
-        return <Loader2 className="w-16 h-16 text-amber-500 animate-spin" />;
-      case "playing":
-        return <Volume2 className="w-16 h-16 text-amber-400" />;
-      case "recording":
-        return <Mic className="w-16 h-16 text-red-500" />;
-      default:
-        return <Mic className="w-16 h-16 text-zinc-400" />;
-    }
-  };
-
-  // Border color based on state
-  const getBorderClass = () => {
-    switch (state) {
-      case "recording":
-        return "border-red-500/80";
-      case "processing":
-        return "border-amber-500/60";
-      case "playing":
-        return "border-amber-400/80";
-      default:
-        return "border-amber-500/20 hover:border-amber-500/40";
-    }
-  };
-
-  // Background based on state
   const getBackgroundClass = () => {
     switch (state) {
-      case "recording":
-        return "bg-gradient-to-br from-zinc-800 to-zinc-900";
-      case "playing":
-        return "bg-gradient-to-br from-zinc-700 to-zinc-800";
+      case "disconnected":
+        return "bg-zinc-800";
+      case "connected":
+        return "bg-zinc-900";
+      case "speaking":
+        return "bg-zinc-900";
       default:
-        return "bg-gradient-to-br from-zinc-800 to-zinc-950";
+        return "bg-zinc-800";
+    }
+  };
+
+  const getBorderClass = () => {
+    switch (state) {
+      case "disconnected":
+        return "border-zinc-600";
+      case "connected":
+        return "border-amber-500/60";
+      case "speaking":
+        return "border-amber-400";
+      default:
+        return "border-zinc-600";
+    }
+  };
+
+  const renderIcon = () => {
+    switch (state) {
+      case "disconnected":
+        return <Circle className="w-12 h-12 text-zinc-500" />;
+      case "connected":
+        return <Mic className="w-12 h-12 text-amber-500" />;
+      case "speaking":
+        return <Volume2 className="w-12 h-12 text-amber-400" />;
+      default:
+        return <Circle className="w-12 h-12 text-zinc-500" />;
     }
   };
 
   return (
-    <div className="relative">
-      {/* Outer glow ring for playing state */}
-      {state === "playing" && (
+    <div className="relative flex items-center justify-center">
+      {/* Outer glow ring for connected/speaking states */}
+      {state !== "disconnected" && (
         <motion.div
-          className="absolute inset-0 rounded-full bg-amber-500/20"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.5, 0.2, 0.5],
+          className="absolute w-48 h-48 rounded-full"
+          style={{
+            background: `radial-gradient(circle, rgba(245, 158, 11, ${state === "speaking" ? 0.3 : 0.15}) 0%, transparent 70%)`,
           }}
+          animate={
+            state === "speaking"
+              ? {
+                  scale: [1, 1.2, 1],
+                  opacity: [0.6, 1, 0.6],
+                }
+              : {
+                  scale: [1, 1.05, 1],
+                  opacity: [0.4, 0.6, 0.4],
+                }
+          }
           transition={{
-            duration: 1.5,
+            duration: state === "speaking" ? 0.5 : 2,
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          style={{ width: 192, height: 192 }}
         />
       )}
 
-      {/* Recording pulse ring */}
-      {state === "recording" && (
+      {/* Pulsing ring for speaking state */}
+      {state === "speaking" && (
+        <>
+          <motion.div
+            className="absolute w-40 h-40 rounded-full border-2 border-amber-400/50"
+            animate={{
+              scale: [1, 1.3],
+              opacity: [0.8, 0],
+            }}
+            transition={{
+              duration: 0.8,
+              repeat: Infinity,
+              ease: "easeOut",
+            }}
+          />
+          <motion.div
+            className="absolute w-40 h-40 rounded-full border-2 border-amber-400/50"
+            animate={{
+              scale: [1, 1.3],
+              opacity: [0.8, 0],
+            }}
+            transition={{
+              duration: 0.8,
+              repeat: Infinity,
+              ease: "easeOut",
+              delay: 0.4,
+            }}
+          />
+        </>
+      )}
+
+      {/* Connected listening pulse */}
+      {state === "connected" && (
         <motion.div
-          className="absolute inset-0 rounded-full border-2 border-red-500/50"
+          className="absolute w-36 h-36 rounded-full border border-amber-500/30"
           animate={{
-            scale: [1, 1.4],
-            opacity: [0.6, 0],
+            scale: [1, 1.1, 1],
+            opacity: [0.3, 0.6, 0.3],
           }}
           transition={{
-            duration: 1,
+            duration: 2,
             repeat: Infinity,
-            ease: "easeOut",
+            ease: "easeInOut",
           }}
-          style={{ width: 192, height: 192 }}
-        />
-      )}
-
-      {/* Processing spinner ring */}
-      {state === "processing" && (
-        <motion.div
-          className="absolute inset-0 rounded-full border-4 border-transparent border-t-amber-500 border-r-amber-500/50"
-          animate={{ rotate: 360 }}
-          transition={{
-            duration: 1,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          style={{ width: 192, height: 192 }}
         />
       )}
 
@@ -147,26 +130,55 @@ export const VoiceMicButton = ({ state, onClick, disabled }: VoiceMicButtonProps
       <motion.button
         onClick={onClick}
         disabled={isDisabled}
-        animate={getAnimationProps()}
-        transition={getTransitionProps()}
-        whileTap={!isDisabled ? { scale: 0.95 } : undefined}
         className={`
-          relative w-48 h-48 rounded-full
+          relative z-10 w-32 h-32 rounded-full
           ${getBackgroundClass()}
-          border-4 ${getBorderClass()}
+          border-2 ${getBorderClass()}
           flex items-center justify-center
-          transition-colors duration-300
-          ${isDisabled ? "cursor-not-allowed opacity-80" : "cursor-pointer"}
-          focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:ring-offset-4 focus:ring-offset-zinc-950
+          transition-all duration-300
+          ${isDisabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:scale-105"}
+          shadow-lg
         `}
+        whileHover={!isDisabled ? { scale: 1.05 } : {}}
+        whileTap={!isDisabled ? { scale: 0.95 } : {}}
+        animate={
+          state === "speaking"
+            ? {
+                boxShadow: [
+                  "0 0 20px rgba(245, 158, 11, 0.3)",
+                  "0 0 40px rgba(245, 158, 11, 0.5)",
+                  "0 0 20px rgba(245, 158, 11, 0.3)",
+                ],
+              }
+            : state === "connected"
+            ? {
+                boxShadow: "0 0 30px rgba(245, 158, 11, 0.2)",
+              }
+            : {}
+        }
+        transition={
+          state === "speaking"
+            ? {
+                duration: 0.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }
+            : {}
+        }
       >
-        {/* Inner highlight */}
-        <div className="absolute inset-4 rounded-full bg-gradient-to-b from-zinc-700/30 to-transparent pointer-events-none" />
-        
-        {/* Icon */}
         <motion.div
-          animate={state === "recording" ? { scale: [1, 1.1, 1] } : { scale: 1 }}
-          transition={state === "recording" ? { duration: 0.5, repeat: Infinity } : undefined}
+          animate={
+            state === "speaking"
+              ? {
+                  scale: [1, 1.1, 1],
+                }
+              : {}
+          }
+          transition={{
+            duration: 0.5,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         >
           {renderIcon()}
         </motion.div>
