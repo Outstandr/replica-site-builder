@@ -1,128 +1,144 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Zap } from "lucide-react";
+import { ArrowLeft, Zap, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useConversation } from "@elevenlabs/react";
 import { VoiceMicButton, VoiceState } from "@/components/lionel/VoiceMicButton";
 import { VoiceChatHistory } from "@/components/lionel/VoiceChatHistory";
-import { useVoiceRecorder } from "@/hooks/useVoiceRecorder";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+  isFinal?: boolean;
 }
-
-const CHAT_FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-with-lionel`;
 
 const LionelVoice = () => {
   const navigate = useNavigate();
-  const [voiceState, setVoiceState] = useState<VoiceState>("idle");
+  const [isConnecting, setIsConnecting] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  
-  const { isRecording, audioBlob, startRecording, stopRecording, clearRecording } = useVoiceRecorder();
 
-  // Handle sending audio to the edge function
-  const sendAudioToLionel = useCallback(async (blob: Blob) => {
-    setVoiceState("processing");
+  const conversation = useConversation({
+    onConnect: () => {
+      console.log("Connected to Lionel Agent");
+      toast.success("Connected to Lionel");
+    },
+    onDisconnect: () => {
+      console.log("Disconnected from Lionel Agent");
+    },
+    onMessage: (message: unknown) => {
+      console.log("Message received:", message);
+      const msg = message as Record<string, unknown>;
+      
+      // Handle user transcripts
+      if (msg.type === "user_transcript") {
+        const event = msg.user_transcription_event as Record<string, unknown> | undefined;
+        const transcript = event?.user_transcript as string | undefined;
+        if (transcript) {
+          setMessages((prev) => {
+            // Check if we need to update the last user message or add new
+            const lastMsg = prev[prev.length - 1];
+            if (lastMsg?.role === "user" && !lastMsg.isFinal) {
+              // Update the existing user message
+              return prev.map((m, i) => 
+                i === prev.length - 1 
+                  ? { ...m, content: transcript, isFinal: true }
+                  : m
+              );
+            }
+            // Add new user message
+            return [...prev, { role: "user", content: transcript, isFinal: true }];
+          });
+        }
+      }
+      
+      // Handle agent responses
+      if (msg.type === "agent_response") {
+        const event = msg.agent_response_event as Record<string, unknown> | undefined;
+        const response = event?.agent_response as string | undefined;
+        if (response) {
+          setMessages((prev) => [...prev, { role: "assistant", content: response, isFinal: true }]);
+        }
+      }
+    },
+    onError: (error) => {
+      console.error("Conversation error:", error);
+      toast.error("Connection error. Please try again.");
+    },
+  });
 
+  const startConversation = useCallback(async () => {
+    setIsConnecting(true);
     try {
-      const formData = new FormData();
-      formData.append("audio", blob, "recording.webm");
-      formData.append("history", JSON.stringify(messages));
+      // Request microphone permission
+      await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      const response = await fetch(CHAT_FUNCTION_URL, {
-        method: "POST",
-        headers: {
-          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: formData,
+      // Get signed URL from edge function
+      const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token");
+
+      if (error) {
+        console.error("Error getting token:", error);
+        throw new Error("Failed to get conversation token");
+      }
+
+      if (!data?.signed_url) {
+        throw new Error("No signed URL received");
+      }
+
+      console.log("Starting conversation with signed URL");
+
+      // Start the conversation with WebSocket
+      await conversation.startSession({
+        signedUrl: data.signed_url,
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to get response from Lionel");
-      }
-
-      const { userText, lionelText, audioBase64 } = await response.json();
-
-      // Update chat history
-      setMessages((prev) => [
-        ...prev,
-        { role: "user", content: userText },
-        { role: "assistant", content: lionelText },
-      ]);
-
-      // Play audio response
-      setVoiceState("playing");
-      const audioUrl = `data:audio/mpeg;base64,${audioBase64}`;
-      const audio = new Audio(audioUrl);
-      audioRef.current = audio;
-
-      audio.onended = () => {
-        setVoiceState("idle");
-        audioRef.current = null;
-      };
-
-      audio.onerror = () => {
-        console.error("Audio playback error");
-        setVoiceState("idle");
-        audioRef.current = null;
-      };
-
-      await audio.play();
     } catch (error) {
-      console.error("Error communicating with Lionel:", error);
-      toast.error(error instanceof Error ? error.message : "Failed to communicate with Lionel");
-      setVoiceState("idle");
-    } finally {
-      clearRecording();
-    }
-  }, [messages, clearRecording]);
-
-  // Handle mic button click
-  const handleMicClick = useCallback(async () => {
-    if (voiceState === "processing" || voiceState === "playing") {
-      return;
-    }
-
-    if (isRecording) {
-      // Stop recording and send
-      stopRecording();
-    } else {
-      // Start recording
-      try {
-        await startRecording();
-      } catch (error) {
+      console.error("Failed to start conversation:", error);
+      if (error instanceof Error && error.message.includes("Permission denied")) {
         toast.error("Microphone access denied. Please allow microphone access to speak with Lionel.");
+      } else {
+        toast.error(error instanceof Error ? error.message : "Failed to connect to Lionel");
       }
+    } finally {
+      setIsConnecting(false);
     }
-  }, [voiceState, isRecording, startRecording, stopRecording]);
+  }, [conversation]);
 
-  // When recording stops and we have audio, send it
-  const prevAudioBlobRef = useRef<Blob | null>(null);
-  if (audioBlob && audioBlob !== prevAudioBlobRef.current && voiceState === "idle") {
-    prevAudioBlobRef.current = audioBlob;
-    sendAudioToLionel(audioBlob);
-  }
+  const stopConversation = useCallback(async () => {
+    await conversation.endSession();
+    setMessages([]);
+  }, [conversation]);
 
-  // Update voice state based on recording status
-  const currentState: VoiceState = isRecording ? "recording" : voiceState;
+  const handleButtonClick = useCallback(() => {
+    if (conversation.status === "disconnected") {
+      startConversation();
+    }
+  }, [conversation.status, startConversation]);
 
-  // Get status text
+  // Map conversation status to our VoiceState
+  const getVoiceState = (): VoiceState => {
+    if (conversation.status === "disconnected") return "disconnected";
+    if (conversation.isSpeaking) return "speaking";
+    return "connected";
+  };
+
   const getStatusText = () => {
-    switch (currentState) {
-      case "recording":
+    if (isConnecting) return "CONNECTING...";
+    
+    const state = getVoiceState();
+    switch (state) {
+      case "disconnected":
+        return "START SESSION";
+      case "connected":
         return "LISTENING...";
-      case "processing":
-        return "PROCESSING...";
-      case "playing":
+      case "speaking":
         return "LIONEL IS SPEAKING...";
       default:
-        return "TAP TO SPEAK";
+        return "START SESSION";
     }
   };
+
+  const voiceState = getVoiceState();
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
@@ -153,7 +169,7 @@ const LionelVoice = () => {
             LIONEL X
           </h1>
           <p className="text-zinc-500 text-sm font-light tracking-wide">
-            High-Performance Voice Coach
+            Real-Time Voice Coach
           </p>
         </motion.div>
 
@@ -165,22 +181,22 @@ const LionelVoice = () => {
           className="relative"
         >
           <VoiceMicButton
-            state={currentState}
-            onClick={handleMicClick}
-            disabled={voiceState === "processing" || voiceState === "playing"}
+            state={voiceState}
+            onClick={handleButtonClick}
+            disabled={isConnecting || conversation.status === "connected"}
           />
         </motion.div>
 
         {/* Status Text */}
         <motion.p
-          key={currentState}
+          key={voiceState + (isConnecting ? "-connecting" : "")}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className={`font-mono text-sm tracking-widest ${
-            currentState === "recording"
-              ? "text-red-500"
-              : currentState === "playing"
+            voiceState === "connected"
               ? "text-amber-400"
+              : voiceState === "speaking"
+              ? "text-amber-300"
               : "text-zinc-500"
           }`}
         >
@@ -204,13 +220,23 @@ const LionelVoice = () => {
         )}
       </main>
 
-      {/* Footer instruction */}
+      {/* Footer with disconnect button */}
       <footer className="p-4 text-center border-t border-zinc-800/50">
-        <p className="text-zinc-600 text-xs font-light">
-          {messages.length === 0
-            ? "Speak your truth. Lionel will forge your path."
-            : `${messages.length / 2} exchanges completed`}
-        </p>
+        {conversation.status === "connected" ? (
+          <button
+            onClick={stopConversation}
+            className="flex items-center justify-center gap-2 mx-auto px-4 py-2 text-zinc-500 hover:text-red-400 transition-colors font-mono text-sm"
+          >
+            <X className="w-4 h-4" />
+            <span>DISCONNECT</span>
+          </button>
+        ) : (
+          <p className="text-zinc-600 text-xs font-light">
+            {messages.length === 0
+              ? "Speak your truth. Lionel will forge your path."
+              : `${Math.ceil(messages.length / 2)} exchanges completed`}
+          </p>
+        )}
       </footer>
     </div>
   );

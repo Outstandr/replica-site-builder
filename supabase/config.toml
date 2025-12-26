@@ -12,5 +12,5 @@ verify_jwt = false
 [functions.get-maps-key]
 verify_jwt = false
 
-[functions.chat-with-lionel]
+[functions.elevenlabs-conversation-token]
 verify_jwt = false
