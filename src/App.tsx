@@ -43,6 +43,9 @@ import {
 // Garden Pages
 import { QuizLibrary, QuizPlayer } from "./pages/garden";
 
+// Lionel Voice
+import LionelVoice from "./pages/LionelVoice";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -87,6 +90,9 @@ const App = () => (
               {/* Soul Garden Routes */}
               <Route path="/garden/quizzes" element={<QuizLibrary />} />
               <Route path="/garden/quizzes/:quizId" element={<QuizPlayer />} />
+              
+              {/* Lionel Voice Coach */}
+              <Route path="/lionel" element={<LionelVoice />} />
               
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
