@@ -6,7 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import MobileLayout from '@/components/layout/MobileLayout';
 import MobileHeader from '@/components/layout/MobileHeader';
 import PageTransition from '@/components/layout/PageTransition';
-import LionelCoach from '@/components/LionelCoach';
+import { Button } from '@/components/ui/button';
+import { MessageCircle } from 'lucide-react';
 import StreakDialog from '@/components/StreakDialog';
 import XPDetailsDialog from '@/components/XPDetailsDialog';
 import JourneyCircle from '@/components/JourneyCircle';
@@ -335,11 +336,14 @@ const Dashboard = () => {
         </main>
       </PageTransition>
 
-      <LionelCoach 
-        userName={profile?.display_name || undefined}
-        currentModule="Rhythm"
-        progress={journeyProgress}
-      />
+      {/* Lionel X Voice Button */}
+      <Button
+        onClick={() => navigate('/lionel')}
+        className="fixed bottom-24 right-4 w-14 h-14 rounded-full shadow-lg z-40 bg-gradient-to-br from-zinc-900 to-zinc-800 hover:scale-110 transition-transform border border-amber-500/30"
+        size="icon"
+      >
+        <MessageCircle className="w-6 h-6 text-amber-500" />
+      </Button>
 
       <StreakDialog
         open={streakDialogOpen}
