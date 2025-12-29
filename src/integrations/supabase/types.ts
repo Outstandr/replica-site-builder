@@ -362,7 +362,9 @@ export type Database = {
           height_cm: number | null
           hotstepper_onboarded: boolean | null
           id: string
+          mission: string | null
           preferred_language: string | null
+          resistance: string | null
           updated_at: string
           user_id: string
           weight_kg: number | null
@@ -378,7 +380,9 @@ export type Database = {
           height_cm?: number | null
           hotstepper_onboarded?: boolean | null
           id?: string
+          mission?: string | null
           preferred_language?: string | null
+          resistance?: string | null
           updated_at?: string
           user_id: string
           weight_kg?: number | null
@@ -394,7 +398,9 @@ export type Database = {
           height_cm?: number | null
           hotstepper_onboarded?: boolean | null
           id?: string
+          mission?: string | null
           preferred_language?: string | null
+          resistance?: string | null
           updated_at?: string
           user_id?: string
           weight_kg?: number | null
@@ -743,6 +749,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_full_briefing: { Args: { p_user_id: string }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
