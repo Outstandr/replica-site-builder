@@ -74,8 +74,15 @@ const LionelVoice = () => {
       // Request microphone permission
       await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      // Get signed URL from edge function
-      const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token");
+      // Get the current session for auth token
+      const { data: { session } } = await supabase.auth.getSession();
+
+      // Get signed URL from edge function with auth token for user context
+      const { data, error } = await supabase.functions.invoke("elevenlabs-conversation-token", {
+        headers: session?.access_token 
+          ? { Authorization: `Bearer ${session.access_token}` }
+          : undefined
+      });
 
       if (error) {
         console.error("Error getting token:", error);
@@ -86,7 +93,7 @@ const LionelVoice = () => {
         throw new Error("No signed URL received");
       }
 
-      console.log("Starting conversation with signed URL");
+      console.log("Starting conversation with signed URL (Elite Mode enabled)");
 
       // Start the conversation with WebSocket
       await conversation.startSession({
