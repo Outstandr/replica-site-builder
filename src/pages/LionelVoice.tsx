@@ -145,7 +145,7 @@ const LionelVoice = () => {
       {/* Header */}
       <header className="flex items-center justify-between p-4 border-b border-zinc-800/50">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/dashboard')}
           className="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
